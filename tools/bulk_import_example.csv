@@ -1,0 +1,12 @@
+# Example CSV for humanarchive bulk-import
+# - UTF-8 encoding (including BOM supported)
+# - Multi-value fields (tags, categories) use | (pipe) separator
+# - Dates: YYYY-MM-DD, YYYY-MM-DD/YYYY-MM-DD, or ~YYYY-MM for approximate
+# - Roles: participant, witness, authority, organizer, victim, bystander
+# - public: true/false (default true)
+# - allow_ai: true/false (default true)
+# - Required: event_name, event_date, role, what_happened (>=20 chars),
+#   your_motivation (>=10 chars, principle 4)
+event_name,event_date,event_location,event_tags,event_categories,role,proximity,age,what_happened,sensory_details,emotional_state,your_motivation,external_pressure,fears,learned_after,would_different,public,embargo_until,allow_ai,language
+Lũ làng A (hư cấu),2024-09-10,Làng A (hư cấu),lũ-lụt|thuỷ-điện|hư-cấu,natural-disaster/flood|technological/infrastructure-failure,witness,direct,58,"Sáng hôm đó nước lên rất nhanh, chưa bao giờ thấy nhanh như thế. Tôi đang nấu cơm thì nghe tiếng hét.","Nước đục ngầu, có mùi bùn. Tiếng chó sủa khắp nơi.","Tôi sợ nhưng không dám hoảng vì còn mẹ già ở nhà.","Tôi ra sân là vì tưởng có người kêu cứu, phản xạ thôi.",,"Sợ mẹ bị kẹt trên giường.","Sau này mới biết đập thuỷ điện xả mà không báo.",,true,,true,vi
+Ngày nước lên,2024-09-10,"Làng A, nhà ven đồng",lũ-lụt|mất-nhà,natural-disaster/flood|humanitarian/displacement,victim,direct,29,"Nhà tôi ở ngay bờ đồng. Khi nước lên, chồng tôi đang đi làm xa. Tôi bế con nhỏ chạy lên đồi.",,"Tê dại. Mấy tuần sau tôi không khóc được.","Tôi chạy là vì con. Nếu một mình tôi có khi đã đứng lại với cái nhà.",,"Sợ con chết trong tay mình.","Tôi từng giận bên thuỷ điện, giờ giận cái hệ thống hơn.",,true,,true,vi

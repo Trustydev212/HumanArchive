@@ -44,13 +44,50 @@ def main() -> int:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HumanArchive — Decentralized collective memory</title>
 <meta name="description" content="Lưu trữ ký ức tập thể phi tập trung của nhân loại. Không phán xét — chỉ lắng nghe.">
-<meta property="og:title" content="HumanArchive">
-<meta property="og:description" content="Decentralized collective memory archive — without judgment.">
-<meta property="og:image" content="assets/banner.svg">
+<meta name="keywords" content="collective memory, oral history, digital humanities, decentralized archive, RAG, ethics, Obsidian, PWA, federation">
+<meta name="author" content="HumanArchive contributors">
+<link rel="canonical" href="https://trustydev212.github.io/HumanArchive/">
+
+<!-- OpenGraph -->
+<meta property="og:title" content="HumanArchive — Decentralized collective memory">
+<meta property="og:description" content="Where every perspective has equal weight. No judgment, just listening. Installable PWA.">
+<meta property="og:image" content="https://trustydev212.github.io/HumanArchive/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="HumanArchive — constellation of voices">
+<meta property="og:url" content="https://trustydev212.github.io/HumanArchive/">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="HumanArchive">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="fr_FR">
+
+<!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HumanArchive — Decentralized collective memory">
+<meta name="twitter:description" content="Every perspective has equal weight. No judgment, just listening.">
+<meta name="twitter:image" content="https://trustydev212.github.io/HumanArchive/assets/social-card.png">
+
 <link rel="icon" type="image/svg+xml" href="web/icons/icon.svg">
 <link rel="apple-touch-icon" href="web/icons/icon.svg">
+
+<!-- JSON-LD structured data -->
+<script type="application/ld+json">
+{{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "HumanArchive",
+  "description": "Decentralized collective memory archive — without judgment",
+  "url": "https://trustydev212.github.io/HumanArchive/",
+  "applicationCategory": "ArchivingApplication",
+  "operatingSystem": "Cross-platform",
+  "license": "MIT (code), CC-BY-SA 4.0 (content)",
+  "codeRepository": "https://github.com/Trustydev212/HumanArchive",
+  "programmingLanguage": "Python",
+  "offers": {{"@type": "Offer", "price": "0"}}
+}}
+</script>
+
 <style>
 :root {{
   --bg: #faf7f0; --card: #fff; --fg: #1f1f1f; --muted: #6a6a6a;

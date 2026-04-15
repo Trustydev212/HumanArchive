@@ -37,6 +37,7 @@ _SUBCOMMAND_TO_TOOL = {
     "timeline":           "timeline_export.py",
     "diff":               "diff_archives.py",
     "verify-signatures":  "verify_signatures.py",
+    "bulk-import":        "bulk_import.py",
     "export-bundle":      "export_bundle.py",
     "import-bundle":      "import_bundle.py",
 }
@@ -74,6 +75,7 @@ Subcommands (quick reference):
   timeline         Sinh HTML timeline theo trục thời gian
   diff A B         So sánh 2 archive hoặc 2 bundle
   verify-signatures Verify ed25519 signatures trên annotations
+  bulk-import FILE Import nhiều memories từ CSV hoặc JSONL
   export-bundle    Export archive thành bundle.tar.gz (federation)
   import-bundle    Import bundle từ node khác
   version          In version

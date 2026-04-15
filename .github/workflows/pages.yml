@@ -48,6 +48,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e .
+          pip install Pillow  # for social card generation
 
       - name: Regenerate archive views
         run: |
@@ -57,6 +58,9 @@ jobs:
           python tools/timeline_export.py --output archive/TIMELINE.html
           python tools/audit.py --archive archive --format md > archive/AUDIT.md
           python tools/obsidian_export.py --output obsidian_vault
+
+      - name: Generate social card PNG (OpenGraph)
+        run: python scripts/gen_social_card.py assets/social-card.png
 
       - name: Build _site/ staging dir
         run: |
@@ -68,7 +72,7 @@ jobs:
           # Archive JSON + generated views (respects consent filter)
           cp -r archive/. _site/archive/
 
-          # Assets (logo, banner)
+          # Assets (logo, banner, social card)
           cp -r assets/. _site/assets/
 
           # Docs (markdown — GitHub Pages sẽ render raw nhưng có link được)
@@ -79,6 +83,9 @@ jobs:
 
           # Generate landing page
           python .github/workflows/build_landing.py _site/index.html
+
+          # SEO: robots.txt + sitemap.xml
+          python .github/workflows/build_seo.py _site/
 
           # 404 page
           cp web/offline.html _site/404.html

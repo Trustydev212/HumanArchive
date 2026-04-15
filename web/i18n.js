@@ -3,7 +3,7 @@
 
 const STORAGE_KEY = "humanarchive.lang";
 const DEFAULT_LANG = "vi";
-const AVAILABLE = ["vi", "en"];
+const AVAILABLE = ["vi", "en", "fr"];
 
 let _strings = {};
 let _lang = DEFAULT_LANG;
@@ -12,7 +12,9 @@ function detectLang() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved && AVAILABLE.includes(saved)) return saved;
   const nav = (navigator.language || "").toLowerCase();
-  if (nav.startsWith("en")) return "en";
+  for (const code of AVAILABLE) {
+    if (nav.startsWith(code)) return code;
+  }
   return DEFAULT_LANG;
 }
 
