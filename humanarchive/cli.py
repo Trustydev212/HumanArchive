@@ -62,6 +62,7 @@ Subcommands (quick reference):
   describe <type>  JSON Schema cho 'memory' hoặc 'annotation' (agent-friendly)
   capabilities     Structured listing toàn bộ CLI (agent discovery)
   for-agent        Integration guide cho AI agents
+  mcp-server       Start MCP server (stdio) cho Claude Desktop / MCP clients
   submit           Đóng góp một ký ức qua CLI tương tác
                    (agent mode: --from-json file.json hoặc --from-stdin)
   rag <query>      Tìm kiếm ngữ nghĩa trong archive (role-balanced)
@@ -246,6 +247,9 @@ def main() -> int:
         return cmd_capabilities(args)
     if sub == "for-agent":
         return cmd_for_agent(args)
+    if sub == "mcp-server":
+        from . import mcp_server
+        return mcp_server.main()
     if sub in _SUBCOMMAND_TO_TOOL:
         return cmd_dispatch(sub, args)
 

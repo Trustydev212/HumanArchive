@@ -6,11 +6,13 @@
 
 **Lưu trữ ký ức tập thể phi tập trung của nhân loại — không phán xét.**
 
-[![Tests](https://img.shields.io/badge/tests-82%20passing-brightgreen)](tests/)
+[![CI](https://github.com/Trustydev212/HumanArchive/actions/workflows/ci.yml/badge.svg)](https://github.com/Trustydev212/HumanArchive/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-118%20passing-brightgreen)](tests/)
 [![License: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![Content: CC BY-SA 4.0](https://img.shields.io/badge/content-CC--BY--SA--4.0-lightgrey)](LICENSE-CONTENT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![Claude](https://img.shields.io/badge/powered_by-Claude%20Opus%204.6-8b4513)](https://www.anthropic.com)
+[![MCP](https://img.shields.io/badge/MCP-compatible-7b2cbf)](docs/AGENT.md)
 
 Tiếng Việt · [English](README_EN.md)
 

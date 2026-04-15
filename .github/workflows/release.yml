@@ -1,0 +1,106 @@
+name: Release to PyPI
+
+# Triggered khi có tag mới dạng v*.*.* push lên repo.
+# Sử dụng PyPI Trusted Publishing (không cần API token) — setup một lần
+# tại https://pypi.org/manage/account/publishing/
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # tag info
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install build tool
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Build sdist + wheel
+        run: python -m build
+
+      - name: Check distribution
+        run: |
+          pip install twine
+          twine check dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  github-release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Extract changelog section
+        id: changelog
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          # Extract section for this tag from CHANGELOG.md
+          awk -v tag="$TAG" '
+            /^## \[/ { if (found) exit; if (index($0, tag)) found=1; next }
+            found
+          ' CHANGELOG.md > /tmp/release_notes.md || true
+          if [ ! -s /tmp/release_notes.md ]; then
+            echo "See CHANGELOG.md" > /tmp/release_notes.md
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.changelog.outputs.tag }}
+          name: "HumanArchive ${{ steps.changelog.outputs.tag }}"
+          body_path: /tmp/release_notes.md
+          files: dist/*
+          draft: false
+          prerelease: ${{ contains(steps.changelog.outputs.tag, '-') }}
+
+  pypi-publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    # Trusted Publishing — không cần secret
+    # https://docs.pypi.org/trusted-publishers/
+    environment:
+      name: pypi
+      url: https://pypi.org/project/humanarchive/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true

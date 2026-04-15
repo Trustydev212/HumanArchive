@@ -1,0 +1,22 @@
+# CODEOWNERS — ai phải review PR cho vùng code nào.
+#
+# Lưu ý: HumanArchive không có "admin" duy nhất. File này chỉ để
+# đảm bảo PR chạm vào khu vực nhạy cảm có người biết trước. Không cho
+# quyền phủ quyết — xem docs/workflows.md.
+
+# Default: mọi PR cần >= 1 reviewer từ trust/reviewers.json
+*                        @Trustydev212
+
+# Ethical core — PR sửa đây cần review nghiêm ngặt
+/core/schema/            @Trustydev212
+/core/llm/               @Trustydev212
+/core/privacy/           @Trustydev212
+/core/integrity.py       @Trustydev212
+/core/annotations.py     @Trustydev212
+/docs/ethics.md          @Trustydev212
+/docs/workflows.md       @Trustydev212
+/trust/                  @Trustydev212
+
+# CI / release — hạn chế người sửa
+/.github/workflows/      @Trustydev212
+/pyproject.toml          @Trustydev212
