@@ -28,14 +28,17 @@ def _repo_root() -> Path:
 
 
 _SUBCOMMAND_TO_TOOL = {
-    "submit":        "submit.py",
-    "rag":           "rag_query.py",
-    "graph":         "graph_export.py",
-    "obsidian":      "obsidian_export.py",
-    "staging":       "staging.py",
-    "audit":         "audit.py",
-    "export-bundle": "export_bundle.py",
-    "import-bundle": "import_bundle.py",
+    "submit":             "submit.py",
+    "rag":                "rag_query.py",
+    "graph":              "graph_export.py",
+    "obsidian":           "obsidian_export.py",
+    "staging":            "staging.py",
+    "audit":              "audit.py",
+    "timeline":           "timeline_export.py",
+    "diff":               "diff_archives.py",
+    "verify-signatures":  "verify_signatures.py",
+    "export-bundle":      "export_bundle.py",
+    "import-bundle":      "import_bundle.py",
 }
 
 
@@ -56,7 +59,11 @@ Usage: humanarchive <subcommand> [args...]
 Subcommands (quick reference):
   demo             Chạy end-to-end demo: build indexes + start web UI
   web              Start static HTTP server cho web/ và archive/
+  describe <type>  JSON Schema cho 'memory' hoặc 'annotation' (agent-friendly)
+  capabilities     Structured listing toàn bộ CLI (agent discovery)
+  for-agent        Integration guide cho AI agents
   submit           Đóng góp một ký ức qua CLI tương tác
+                   (agent mode: --from-json file.json hoặc --from-stdin)
   rag <query>      Tìm kiếm ngữ nghĩa trong archive (role-balanced)
   rag --build      Build / rebuild vector index
   graph <format>   Export graph view (mermaid | tree | tagcloud | prism | json)
@@ -154,8 +161,52 @@ def cmd_web(args: list[str]) -> int:
     return subprocess.call([sys.executable, "-m", "http.server", port])
 
 
-def cmd_version(_args: list[str]) -> int:
-    print(f"humanarchive {__version__}")
+def cmd_version(args: list[str]) -> int:
+    if "--json" in args:
+        import json
+        import platform
+        print(json.dumps({
+            "humanarchive_version": __version__,
+            "python_version": platform.python_version(),
+            "api": "humanarchive/v1",
+        }))
+    else:
+        print(f"humanarchive {__version__}")
+    return 0
+
+
+def cmd_describe(args: list[str]) -> int:
+    """Return JSON Schema for a data type. Agent-friendly."""
+    import json
+    from . import agent
+
+    if not args:
+        print(
+            json.dumps({"error": "missing type_name", "available": ["memory", "annotation"]}),
+            file=sys.stderr,
+        )
+        return 2
+    try:
+        result = agent.describe(args[0])
+    except (KeyError, FileNotFoundError) as exc:
+        print(json.dumps({"error": str(exc)}), file=sys.stderr)
+        return 2
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_capabilities(_args: list[str]) -> int:
+    import json
+    from . import agent
+
+    print(json.dumps(agent.capabilities(), ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_for_agent(_args: list[str]) -> int:
+    from . import agent
+
+    print(agent.for_agent_doc())
     return 0
 
 
@@ -189,6 +240,12 @@ def main() -> int:
         return cmd_demo(args)
     if sub == "web":
         return cmd_web(args)
+    if sub == "describe":
+        return cmd_describe(args)
+    if sub == "capabilities":
+        return cmd_capabilities(args)
+    if sub == "for-agent":
+        return cmd_for_agent(args)
     if sub in _SUBCOMMAND_TO_TOOL:
         return cmd_dispatch(sub, args)
 

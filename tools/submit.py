@@ -309,15 +309,34 @@ def _update_index(event_dir: Path, memory: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Đóng góp một ký ức vào HumanArchive.")
-    parser.add_argument("--from", dest="from_file", type=Path, help="Đọc memory từ file JSON (không tương tác).")
-    parser.add_argument("--dry-run", action="store_true", help="Validate nhưng không ghi.")
+    parser.add_argument("--from", dest="from_file", type=Path,
+                        help="Đọc memory từ file JSON (không tương tác).")
+    parser.add_argument("--from-json", dest="from_json_path", type=str,
+                        help="Alias của --from. Chấp nhận '-' để đọc stdin.")
+    parser.add_argument("--from-stdin", action="store_true",
+                        help="Đọc memory JSON từ stdin (agent mode).")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Validate nhưng không ghi.")
+    parser.add_argument("--json", action="store_true",
+                        help="Output JSON thay vì text (agent mode).")
     args = parser.parse_args()
 
-    if args.from_file:
+    non_interactive = bool(args.from_file or args.from_json_path or args.from_stdin)
+
+    # Load memory
+    if args.from_stdin or args.from_json_path == "-":
+        try:
+            memory = json.load(sys.stdin)
+        except json.JSONDecodeError as exc:
+            _out(args.json, {"ok": False, "error": f"stdin JSON invalid: {exc}"})
+            return 2
+    elif args.from_json_path:
+        p = Path(args.from_json_path)
+        with p.open(encoding="utf-8") as f:
+            memory = json.load(f)
+    elif args.from_file:
         with args.from_file.open(encoding="utf-8") as f:
             memory = json.load(f)
-        if "memory_id" not in memory:
-            memory["memory_id"] = compute_memory_id(memory)
     else:
         try:
             memory = interactive_flow()
@@ -325,37 +344,67 @@ def main() -> int:
             print("\n\n(Đã huỷ. Không có dữ liệu nào được lưu.)")
             return 130
 
+    if "memory_id" not in memory:
+        memory["memory_id"] = compute_memory_id(memory)
+
     errors = validate_memory(memory)
     if errors:
-        print("\nKý ức chưa hợp lệ:")
-        for e in errors:
-            print(f"  - {e}")
+        if args.json:
+            _out(True, {"ok": False, "errors": errors, "memory_id": memory.get("memory_id")})
+        else:
+            print("\nKý ức chưa hợp lệ:")
+            for e in errors:
+                print(f"  - {e}")
         return 2
 
-    print("\n── Tóm tắt ──")
-    print(f"  event_id      : {memory['event']['event_id']}")
-    print(f"  memory_id     : {memory['memory_id']}")
-    print(f"  role          : {memory['perspective']['role']}")
-    print(f"  public        : {memory['consent']['public']}")
-    print(f"  embargo_until : {memory['consent'].get('embargo_until')}")
-
     if args.dry_run:
-        print("\n(dry-run: không ghi file.)")
+        summary = {
+            "ok": True, "dry_run": True,
+            "event_id": memory["event"]["event_id"],
+            "memory_id": memory["memory_id"],
+            "role": memory["perspective"]["role"],
+            "public": memory["consent"]["public"],
+            "embargo_until": memory["consent"].get("embargo_until"),
+        }
+        _out(args.json, summary)
         return 0
 
-    if not args.from_file:
+    # Confirm only in interactive mode
+    if not non_interactive:
+        print("\n── Tóm tắt ──")
+        print(f"  event_id      : {memory['event']['event_id']}")
+        print(f"  memory_id     : {memory['memory_id']}")
+        print(f"  role          : {memory['perspective']['role']}")
+        print(f"  public        : {memory['consent']['public']}")
+        print(f"  embargo_until : {memory['consent'].get('embargo_until')}")
         if not ask_bool("\nGhi memory vào archive?", default=True):
             print("(Đã huỷ.)")
             return 0
 
     out = save_memory(memory)
-    print(f"\nĐã lưu: {out.relative_to(REPO_ROOT)}")
-    print("\nĐể đóng góp lên repo chung, bạn có thể:")
-    print(f"  git add {out.relative_to(REPO_ROOT)} {out.parent.relative_to(REPO_ROOT)}/_index.json")
-    print('  git commit -m "archive: add memory to <event_id>"')
-    print("  git push")
-    print("\nCảm ơn bạn. Mỗi ký ức làm bức tranh lịch sử khó bị bóp méo hơn.")
+    result = {
+        "ok": True,
+        "memory_id": memory["memory_id"],
+        "event_id": memory["event"]["event_id"],
+        "role": memory["perspective"]["role"],
+        "saved_to": str(out.relative_to(REPO_ROOT)),
+    }
+    if args.json:
+        _out(True, result)
+    else:
+        print(f"\nĐã lưu: {out.relative_to(REPO_ROOT)}")
+        print("\nĐể đóng góp lên repo chung, bạn có thể:")
+        print(f"  git add {out.relative_to(REPO_ROOT)} {out.parent.relative_to(REPO_ROOT)}/_index.json")
+        print('  git commit -m "archive: add memory to <event_id>"')
+        print("  git push")
+        print("\nCảm ơn bạn. Mỗi ký ức làm bức tranh lịch sử khó bị bóp méo hơn.")
     return 0
+
+
+def _out(as_json: bool, data: dict) -> None:
+    """Print result. JSON to stdout, human messages already gone to terminal."""
+    if as_json:
+        print(json.dumps(data, ensure_ascii=False))
 
 
 if __name__ == "__main__":
