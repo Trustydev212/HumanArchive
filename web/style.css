@@ -1,0 +1,125 @@
+/* HumanArchive — minimal, readable, respectful */
+:root {
+  --bg: #fafaf6;
+  --bg-card: #ffffff;
+  --fg: #1f1f1f;
+  --muted: #6a6a6a;
+  --accent: #8b4513;
+  --border: #e2ddd3;
+  --warn: #b85c00;
+  --severe: #8b2222;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+}
+header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+}
+header h1 { margin: 0; font-size: 1.6rem; color: var(--accent); letter-spacing: -0.01em; }
+header .tagline { margin: 0.3rem 0 1rem; color: var(--muted); font-size: 0.95rem; }
+nav a { margin-right: 1.2rem; color: var(--fg); text-decoration: none; font-size: 0.92rem; }
+nav a:hover { color: var(--accent); }
+
+main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+section { margin: 2.5rem 0; }
+section h2 { border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
+
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+
+.stats { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0; }
+.stats .stat {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 0.8rem 1rem; min-width: 130px;
+}
+.stats .stat b { display: block; font-size: 1.4rem; color: var(--accent); }
+.stats .stat span { color: var(--muted); font-size: 0.85rem; }
+
+.principles { padding-left: 1.2rem; }
+.principles li { margin: 0.3rem 0; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+.controls input, .controls select, .controls button {
+  padding: 0.5rem 0.75rem; border: 1px solid var(--border);
+  border-radius: 4px; font: inherit; background: var(--bg-card);
+}
+.controls input { flex: 1 1 260px; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem; }
+.card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1rem; cursor: pointer; transition: border-color 0.15s;
+}
+.card:hover { border-color: var(--accent); }
+.card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+.card .meta { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+.card .tags { margin-top: 0.5rem; }
+.tag {
+  display: inline-block; background: #f0eada; color: #6a4f20;
+  padding: 0.12rem 0.5rem; border-radius: 10px; font-size: 0.78rem;
+  margin: 0.1rem 0.15rem 0 0;
+}
+.role-badge {
+  display: inline-block; background: #e5e5e5; color: #333;
+  padding: 0.1rem 0.5rem; border-radius: 3px;
+  font-size: 0.75rem; margin-right: 0.3rem;
+}
+
+.mermaid-host {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: 1rem; overflow-x: auto;
+}
+
+.tree { background: var(--bg-card); border: 1px solid var(--border); padding: 1rem; border-radius: 6px; }
+.tree ul { padding-left: 1.2rem; }
+.tree .count { color: var(--muted); font-size: 0.85rem; }
+
+.tagcloud { display: flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.5rem 0; }
+.tagcloud .tag { font-size: 0.9rem; }
+
+#rag-form { display: flex; gap: 0.5rem; margin: 1rem 0; }
+#rag-form input { flex: 1; padding: 0.7rem; border: 1px solid var(--border); border-radius: 4px; font: inherit; }
+#rag-form button { padding: 0.7rem 1.4rem; background: var(--accent); color: white; border: none; border-radius: 4px; cursor: pointer; }
+
+.hit {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px; padding: 0.9rem 1rem; margin: 0.7rem 0;
+}
+.hit .hit-meta { color: var(--muted); font-size: 0.82rem; }
+.hit pre { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
+
+.trauma-warning {
+  background: #fff4e0; border-left: 3px solid var(--warn);
+  padding: 0.6rem 0.8rem; border-radius: 4px; font-size: 0.9rem; margin: 0.5rem 0;
+}
+.trauma-warning.severe { background: #ffe0e0; border-left-color: var(--severe); }
+
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: flex; align-items: flex-start; justify-content: center; padding: 3rem 1rem;
+  z-index: 100;
+}
+.modal {
+  background: var(--bg-card); max-width: 780px; width: 100%; max-height: 85vh;
+  border-radius: 8px; padding: 1.5rem 2rem; overflow-y: auto;
+}
+.modal .close {
+  float: right; border: none; background: transparent;
+  font-size: 1.4rem; cursor: pointer; color: var(--muted);
+}
+
+footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; color: var(--muted); font-size: 0.88rem; }
+footer a { color: var(--accent); }
+
+@media (max-width: 600px) {
+  main { padding: 1rem; }
+  header { padding: 1rem; }
+  nav a { display: inline-block; margin: 0.2rem 0.7rem 0.2rem 0; }
+}

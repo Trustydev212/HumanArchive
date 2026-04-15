@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HumanArchive — Browser</title>
+<link rel="stylesheet" href="style.css" />
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+<header>
+  <h1>HumanArchive</h1>
+  <p class="tagline">Lưu trữ ký ức tập thể phi tập trung. Không phán xét — chỉ lắng nghe.</p>
+  <nav>
+    <a href="#overview">Overview</a>
+    <a href="#events">Events</a>
+    <a href="#graph">Graph</a>
+    <a href="#search">RAG search</a>
+    <a href="submit.html">+ Đóng góp</a>
+  </nav>
+</header>
+
+<main>
+
+<section id="overview">
+  <h2>Tổng quan</h2>
+  <div id="overview-stats" class="stats">Đang tải <code>archive/graph.json</code>…</div>
+  <details>
+    <summary>5 nguyên tắc bất biến</summary>
+    <ol class="principles">
+      <li><strong>Không phán xét đúng/sai</strong> — AI không kết luận ai đúng ai sai.</li>
+      <li><strong>Không xác định danh tính</strong> — PII được scrub trước khi hiển thị/index.</li>
+      <li><strong>Luôn đồng cảm trước khi phân tích</strong> — trauma được cảnh báo, không gatekeep.</li>
+      <li><strong>Động cơ quan trọng hơn hành động</strong> — every memory bắt buộc có motivation.</li>
+      <li><strong>Dữ liệu thô không đổi</strong> — withdrawn/embargo filter, memory_id = sha256 verifiable.</li>
+    </ol>
+  </details>
+</section>
+
+<section id="events">
+  <h2>Events</h2>
+  <div class="controls">
+    <input id="search-events" type="text" placeholder="Lọc theo tên, tag, category…" />
+    <select id="filter-category">
+      <option value="">(mọi category)</option>
+    </select>
+    <select id="filter-role">
+      <option value="">(mọi role)</option>
+      <option>participant</option><option>witness</option><option>authority</option>
+      <option>organizer</option><option>victim</option><option>bystander</option>
+    </select>
+  </div>
+  <div id="event-list" class="card-grid"></div>
+</section>
+
+<section id="graph">
+  <h2>Relation graph</h2>
+  <p class="muted">Mỗi node là một event, edge là quan hệ (caused_by, part_of, ...). Render bằng Mermaid.</p>
+  <div id="mermaid-graph" class="mermaid-host">Đang tải…</div>
+
+  <h3>Category tree</h3>
+  <div id="category-tree" class="tree"></div>
+
+  <h3>Tag cloud</h3>
+  <div id="tag-cloud" class="tagcloud"></div>
+</section>
+
+<section id="search">
+  <h2>RAG search</h2>
+  <p class="muted">
+    Tìm kiếm ngữ nghĩa qua <code>archive/rag_index.json</code>. Query được
+    <strong>scrub PII</strong> trước khi embed (chống identity-probe).
+    Kết quả được <strong>role-balanced</strong> (chống bias amplification).
+  </p>
+  <form id="rag-form">
+    <input id="rag-query" type="text" placeholder="Hỏi archive bằng tiếng Việt… VD: tại sao xả đập sớm?" />
+    <button type="submit">Tìm</button>
+  </form>
+  <div id="rag-status" class="muted small"></div>
+  <div id="rag-results"></div>
+</section>
+
+<section id="detail-modal-host"></section>
+
+</main>
+
+<footer>
+  <p>
+    HumanArchive · <a href="https://github.com/Trustydev212/HumanArchive">GitHub</a>
+    · Xem <code>docs/ethics.md</code> để hiểu các nguyên tắc bất biến.
+  </p>
+</footer>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

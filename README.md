@@ -148,6 +148,44 @@ Backend embedder pluggable: **Voyage** (Anthropic partner, tốt nhất),
 **SentenceTransformer** (local, đa ngôn ngữ), hoặc **HashEmbedder**
 (zero-dep fallback).
 
+## Web UI (single-page static, không build)
+
+```bash
+# Đảm bảo graph + rag index đã có
+python tools/graph_export.py json > archive/graph.json
+python tools/rag_query.py --build
+
+# Serve
+python -m http.server 8000
+# → http://localhost:8000/web/          (browse archive)
+# → http://localhost:8000/web/submit.html (form đóng góp)
+```
+
+Features: event browser với filter, Mermaid relation graph, category
+tree, tag cloud, RAG search **client-side** (JS port của HashEmbedder
+khớp Python byte-for-byte). `submit.html` có live PII scan + download
+JSON (client-only, không gửi data đi đâu cho đến khi user chủ động).
+
+## Federation — bundle protocol
+
+```bash
+python tools/export_bundle.py --output bundle.tar.gz                # export
+python tools/import_bundle.py bundle.tar.gz --archive other_archive # import
+python tools/export_bundle.py --sign-key my_ed25519.pem ...         # có ký
+```
+
+Bundle có `MANIFEST.json` + merkle root + signature tuỳ chọn. Content-addressed
+nên dedup tự nhiên. Xem `docs/federation.md` để hiểu merge rules và
+kênh trao đổi (GitHub / IPFS / Arweave / email / USB).
+
+## LLM-aided detectors (tuỳ chọn)
+
+- `core.privacy.llm_pii.llm_scan_pii()` — bổ sung regex, bắt tên viết
+  rời, chức danh duy nhất, địa chỉ cụ thể. Fallback [] nếu không có API.
+- `core.trauma_llm.llm_classify_trauma()` — phân loại trauma nuanced,
+  chống false positive keyword. Fallback về keyword detector nếu không
+  có API.
+
 ---
 
 ## Bắt đầu nhanh

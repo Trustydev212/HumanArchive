@@ -7,3 +7,13 @@ anthropic>=0.40.0
 
 # Schema validation cho CLI submit (tuỳ chọn — submit.py đã có validator nội bộ).
 jsonschema>=4.0.0
+
+# RAG embedder: Voyage AI (Anthropic's recommended partner) cho production.
+# Set VOYAGE_API_KEY để dùng. Hoặc set HUMANARCHIVE_USE_SENTENCE_TRANSFORMERS
+# để dùng local sentence-transformers (nặng hơn, cần GPU cho tốc độ tốt).
+# Nếu cả hai đều không có → fallback HashEmbedder (zero-dep, keyword match).
+# voyageai>=0.2.0
+# sentence-transformers>=2.5.0
+
+# Federation: ký/verify bundle bằng ed25519. Chỉ cần nếu dùng --sign-key.
+# cryptography>=42.0.0

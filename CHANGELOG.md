@@ -1,5 +1,66 @@
 # Changelog
 
+## [v0.5] — "Tất cả": 5 hướng tiếp theo cùng lúc
+
+### 1. LLM-aided PII + trauma (graceful fallback)
+
+- `core/privacy/llm_pii.py` — `llm_scan_pii()` bổ sung regex, bắt được:
+  tên viết rời ("ng.v.an"), tên không viết hoa ("bí thư xã minh"), biệt
+  danh định danh được, chức danh duy nhất, địa chỉ cụ thể. `merge_findings`
+  hợp nhất với regex findings mà không double-count.
+- `core/trauma_llm.py` — `llm_classify_trauma()` xử lý false positive
+  của keyword detector ("giết thời gian" không còn trigger "death"). Nếu
+  LLM không available → fallback keyword detector.
+
+### 2. Voyage wire-up
+
+- `requirements.txt` document hai option: Voyage (production), local
+  sentence-transformers. `VoyageEmbedder` đã có từ v0.4, chỉ cần set
+  `VOYAGE_API_KEY` + `pip install voyageai`.
+
+### 3. Federation protocol v1
+
+- `tools/export_bundle.py` + `tools/import_bundle.py` — export archive
+  thành bundle `.tar.gz` với MANIFEST (merkle root + metadata) và
+  SIGNATURE tuỳ chọn (ed25519). Import verify merkle + per-memory hash.
+- Merge strategy: dedup tự nhiên qua content-addressing. Nếu cùng
+  memory_id có content khác → reject bundle.
+- `docs/federation.md` — giải thích protocol + khi nên dùng kênh nào
+  (GitHub / IPFS / Arweave / email / USB).
+- `tests/test_bundle.py` — 6 tests: roundtrip, dedup, merkle stability,
+  tamper rejection, dry-run.
+
+### 4. Web UI (single-page static)
+
+- `web/index.html` + `web/app.js` + `web/style.css` — browser đọc
+  `archive/graph.json` + `archive/rag_index.json`. Event cards, Mermaid
+  relation graph, category tree, tag cloud, modal chi tiết event.
+- `web/hash_embed.js` — JS port của Python `HashEmbedder` byte-for-byte
+  (sha256 qua `crypto.subtle.digest`). Client-side RAG search với
+  role-balanced retrieval + PII scrub từ query. Test parity ở
+  `tests/test_js_python_parity.py`.
+- Không cần build step. Chạy: `python -m http.server 8000` rồi mở
+  `/web/`.
+
+### 5. Web submission form
+
+- `web/submit.html` + `web/submit.js` — form đóng góp client-only, live
+  PII scan, memory_id + event_id được tính trong browser khớp Python
+  (canonical JSON + sha256). Download JSON, user tự submit qua PR/email.
+
+### Test: 60 → 72 pass (6 bundle + 6 JS/Python parity).
+
+### Limits (trung thực):
+
+- LLM-aided PII/trauma **chưa test end-to-end với Claude API thật** vì
+  CI không có key; logic pass với mock, fallback pass với real pipeline.
+- Signature verify của federation cần `pip install cryptography`; CI
+  chưa bật do không có trong requirements mặc định.
+- Web UI chỉ match index được build bằng HashEmbedder (Python
+  VoyageEmbedder/SentenceTransformer không reproduce được trong browser).
+
+---
+
 ## [v0.4] — Obsidian vault export + RAG với safeguards
 
 ### Obsidian export (`tools/obsidian_export.py`)

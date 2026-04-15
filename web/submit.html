@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HumanArchive — Đóng góp ký ức</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<header>
+  <h1>Đóng góp một ký ức</h1>
+  <p class="tagline">
+    Bạn không cần cho chúng tôi biết bạn là ai. Không có câu trả lời
+    "đúng" hay "sai" — chỉ có sự thật bạn đã sống qua.
+  </p>
+  <nav>
+    <a href="index.html">← Archive browser</a>
+  </nav>
+</header>
+
+<main>
+
+<section>
+  <h2>Hướng dẫn nhanh</h2>
+  <ol class="muted small">
+    <li>Điền form bên dưới. Mọi trường (trừ động cơ & chuyện đã xảy ra) đều tuỳ chọn.</li>
+    <li>Form sẽ cảnh báo nếu phát hiện PII. Bạn tự quyết có giữ hay không.</li>
+    <li>Nhấn <strong>Xem JSON</strong> để xem memory đã validate.</li>
+    <li>Nhấn <strong>Tải xuống</strong> để lưu file. Sau đó gửi qua PR hoặc email —
+      đừng paste thẳng lên chat công khai nếu có thông tin nhạy cảm.</li>
+    <li>Dữ liệu chỉ nằm trên thiết bị của bạn cho đến khi bạn chủ động gửi đi.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Thông tin sự kiện</h2>
+  <div class="form-grid">
+    <label>Tên sự kiện (theo cách bạn gọi) *
+      <input id="ev-name" required maxlength="200" />
+    </label>
+    <label>Ngày (ISO, VD: 2001-09-11 hoặc ~1975-04) *
+      <input id="ev-date" required placeholder="YYYY-MM-DD hoặc ~YYYY-MM" />
+    </label>
+    <label>Địa điểm (có thể mơ hồ)
+      <input id="ev-location" />
+    </label>
+    <label>Tags (cách nhau bằng dấu phẩy, viết thường gạch nối)
+      <input id="ev-tags" placeholder="lũ-lụt, miền-trung, thập-niên-2020" />
+    </label>
+    <label>Categories (paths, cách nhau bằng dấu phẩy)
+      <input id="ev-categories" placeholder="natural-disaster/flood, humanitarian/displacement" />
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Góc nhìn của bạn</h2>
+  <div class="form-grid">
+    <label>Vai trò *
+      <select id="p-role" required>
+        <option value="">— chọn —</option>
+        <option value="participant">participant — trực tiếp tham gia</option>
+        <option value="witness">witness — chứng kiến trực tiếp</option>
+        <option value="authority">authority — ở vị trí quyết định</option>
+        <option value="organizer">organizer — tổ chức/lên kế hoạch</option>
+        <option value="victim">victim — bị ảnh hưởng/tổn thương</option>
+        <option value="bystander">bystander — ở gần, không trực tiếp liên quan</option>
+      </select>
+    </label>
+    <label>Tiếp cận
+      <select id="p-proximity">
+        <option value="">—</option>
+        <option value="direct">direct — chứng kiến trực tiếp</option>
+        <option value="nearby">nearby — ở gần</option>
+        <option value="secondhand">secondhand — nghe kể lại</option>
+      </select>
+    </label>
+    <label>Tuổi khi sự kiện xảy ra
+      <input id="p-age" type="number" min="0" max="120" />
+    </label>
+  </div>
+</section>
+
+<section>
+  <h2>Ký ức</h2>
+  <label>Chuyện gì đã xảy ra * <small class="muted">(tối thiểu 20 ký tự)</small>
+    <textarea id="m-what" rows="6" required minlength="20"></textarea>
+  </label>
+  <label>Chi tiết giác quan (mùi, âm thanh, ánh sáng…)
+    <textarea id="m-sensory" rows="2"></textarea>
+  </label>
+  <label>Trạng thái cảm xúc lúc đó
+    <textarea id="m-emotional" rows="2"></textarea>
+  </label>
+</section>
+
+<section>
+  <h2>Động cơ (bắt buộc — nguyên tắc 4)</h2>
+  <label>Vì sao bạn làm/ở đó/phản ứng như vậy? * <small class="muted">(tối thiểu 10 ký tự)</small>
+    <textarea id="motiv-your" rows="3" required minlength="10"></textarea>
+  </label>
+  <label>Ai/tổ chức/hoàn cảnh nào gây áp lực lên bạn?
+    <textarea id="motiv-pressure" rows="2"></textarea>
+  </label>
+  <label>Bạn sợ điều gì khi đó?
+    <textarea id="motiv-fears" rows="2"></textarea>
+  </label>
+</section>
+
+<section>
+  <h2>Nhìn lại</h2>
+  <label>Sau này bạn hiểu ra điều gì?
+    <textarea id="ctx-learned" rows="2"></textarea>
+  </label>
+  <label>Nếu được chọn lại, bạn có làm khác không?
+    <textarea id="ctx-diff" rows="2"></textarea>
+  </label>
+</section>
+
+<section>
+  <h2>Đồng ý công bố</h2>
+  <div class="form-grid">
+    <label><input id="c-public" type="checkbox" checked /> Cho phép công bố công khai</label>
+    <label>Trì hoãn công bố đến (để trống nếu không)
+      <input id="c-embargo" type="date" />
+    </label>
+    <label><input id="c-ai" type="checkbox" checked /> Cho phép AI engine phân tích</label>
+  </div>
+</section>
+
+<section>
+  <h2>Kiểm tra PII</h2>
+  <button id="btn-scan" type="button">Quét PII trong các trường văn tự do</button>
+  <div id="pii-result" class="muted small"></div>
+</section>
+
+<section>
+  <h2>Hoàn tất</h2>
+  <div class="controls">
+    <button id="btn-preview" type="button">Xem JSON</button>
+    <button id="btn-download" type="button">Tải xuống memory.json</button>
+  </div>
+  <pre id="json-preview" class="hit" style="display:none"></pre>
+  <div id="errors" style="color: var(--severe); margin-top: 0.7rem;"></div>
+</section>
+
+</main>
+
+<footer>
+  <p>
+    Hướng dẫn đóng góp an toàn: <code>docs/ethics.md</code> ·
+    <a href="https://github.com/Trustydev212/HumanArchive">GitHub</a>
+  </p>
+</footer>
+
+<script type="module" src="submit.js"></script>
+</body>
+</html>
