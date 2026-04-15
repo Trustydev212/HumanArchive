@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "humanarchive"
+version = "0.7.0"
+description = "Decentralized collective memory archive — without judgment. Preserves multi-perspective truth with built-in ethical safeguards, RAG, federation, and an Obsidian-ready knowledge graph."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = [
+    "collective-memory",
+    "oral-history",
+    "digital-humanities",
+    "decentralized-archive",
+    "rag",
+    "ethics",
+    "anthropic-claude",
+    "obsidian",
+    "federation",
+    "privacy",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Sociology :: History",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = []
+
+[project.optional-dependencies]
+# Claude API cho analyze_memory / generate_historical_entry
+claude = ["anthropic>=0.40.0"]
+# Voyage AI embedding (Anthropic's recommended partner) cho RAG production
+voyage = ["voyageai>=0.2.0"]
+# Local multilingual embedding — alternative cho Voyage
+local = ["sentence-transformers>=2.5.0"]
+# JSON Schema validation
+schema = ["jsonschema>=4.0.0"]
+# Federation signing (ed25519)
+crypto = ["cryptography>=42.0.0"]
+# All runtime features
+all = [
+    "anthropic>=0.40.0",
+    "voyageai>=0.2.0",
+    "sentence-transformers>=2.5.0",
+    "jsonschema>=4.0.0",
+    "cryptography>=42.0.0",
+]
+# Dev
+dev = ["pytest>=7.0.0", "pytest-cov>=4.0.0"]
+
+[project.scripts]
+humanarchive = "humanarchive.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Trustydev212/HumanArchive"
+Repository = "https://github.com/Trustydev212/HumanArchive"
+Documentation = "https://github.com/Trustydev212/HumanArchive/tree/main/docs"
+Issues = "https://github.com/Trustydev212/HumanArchive/issues"
+Changelog = "https://github.com/Trustydev212/HumanArchive/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["humanarchive*", "core*"]
+exclude = ["tests*", "archive*", "obsidian_vault*", "web*"]
+
+[tool.setuptools.package-data]
+"core" = ["schema/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q --tb=short"

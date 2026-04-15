@@ -1,269 +1,233 @@
+<div align="center">
+
+<img src="assets/banner.svg" alt="HumanArchive" width="900"/>
+
 # HumanArchive
 
-> *"Lịch sử không phải là một dòng chảy duy nhất. Nó là một chòm sao của vô số góc nhìn — và chỉ khi ta đọc nó từ nhiều phía, sự thật mới khó bị che giấu."*
+**Lưu trữ ký ức tập thể phi tập trung của nhân loại — không phán xét.**
 
-**HumanArchive** là một hệ thống lưu trữ ký ức tập thể phi tập trung của nhân loại.
-Chúng tôi không đi tìm "một sự thật duy nhất". Chúng tôi xây dựng một môi trường
-trong đó **sự thật khó bị che giấu hơn** — thông qua dữ liệu chéo từ nhiều người
-đã thực sự sống qua cùng một sự kiện.
+[![Tests](https://img.shields.io/badge/tests-82%20passing-brightgreen)](tests/)
+[![License: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
+[![Content: CC BY-SA 4.0](https://img.shields.io/badge/content-CC--BY--SA--4.0-lightgrey)](LICENSE-CONTENT)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
+[![Claude](https://img.shields.io/badge/powered_by-Claude%20Opus%204.6-8b4513)](https://www.anthropic.com)
 
----
+Tiếng Việt · [English](README_EN.md)
 
-## Tại sao lại cần HumanArchive?
+</div>
 
-Lịch sử, cho đến nay, được viết bởi **người chiến thắng**, **người có quyền lực
-xuất bản**, hoặc **người có giọng nói to nhất**. Những người còn lại — nạn nhân,
-người chứng kiến, người ở ngoài rìa sự kiện, người tham gia nhưng không lên
-tiếng — hầu như không để lại dấu vết trong văn bản chính thức.
+> **Lịch sử được viết bởi người chiến thắng.** Cho đến bây giờ.
+>
+> HumanArchive là một giao thức + reference implementation để lưu trữ
+> **ký ức đa góc nhìn** về các sự kiện lịch sử — nơi một nhân chứng,
+> một nạn nhân, một người có thẩm quyền, và một người ngoài cuộc đều
+> có thể cùng kể về một sự kiện, và **cả AI lẫn curator đều không
+> được phép phán xét ai "đúng"**.
 
-Hệ quả:
-- Các sự kiện lịch sử bị đơn giản hóa thành một narrative duy nhất.
-- Các góc khuất bị xóa vĩnh viễn khỏi ký ức tập thể.
-- Thế hệ sau không có cách nào tự kiểm chứng.
+## Tại sao dự án này tồn tại
 
-**HumanArchive lật ngược quy trình này**: bất cứ ai đã sống qua một sự kiện đều
-có thể đóng góp ký ức của mình — với tư cách **participant, witness, authority,
-organizer, victim, hoặc bystander**. Không có góc nhìn nào quan trọng hơn góc
-nhìn khác. AI của chúng tôi sẽ **cross-reference** giữa các ký ức để tìm ra
-điểm trùng khớp và mâu thuẫn, rồi trình bày cả hai — không phán xét đúng/sai.
+Mọi narrative lịch sử đều có hình dạng được áp đặt bởi **người có quyền
+xuất bản**: người chiến thắng, người biết chữ, người có giọng nói to
+nhất. Những người còn lại — nạn nhân không dám lên tiếng vì sợ trả đũa,
+nhân chứng ở rìa sự kiện, người tham gia nhưng vai trò quá nhỏ để vào
+tiểu sử — hầu như không để lại dấu vết.
 
----
+HumanArchive lật ngược điều đó. Bất cứ ai từng sống qua sự kiện đều có
+thể đóng góp một ký ức **nặc danh**. AI cross-reference nhiều ký ức để
+tìm điểm trùng và điểm khác — **không kết luận ai đúng**. Dữ liệu thô
+bất biến; consent được enforce bằng code.
 
-## Manifesto — 5 nguyên tắc bất biến
+## Thử trong 60 giây
 
-1. **KHÔNG phán xét đúng/sai.** Chúng tôi chỉ phân tích và hiểu. Mọi ký ức đều
-   có giá trị, kể cả ký ức của "bên sai" theo cách nhìn đại chúng.
-
-2. **KHÔNG xác định danh tính bất kỳ ai.** Người đóng góp được bảo vệ tuyệt đối.
-   Danh tính không bao giờ bị gắn với nội dung ký ức trong dữ liệu công khai.
-
-3. **LUÔN đồng cảm trước khi phân tích.** AI được huấn luyện để hiểu nỗi đau,
-   hoàn cảnh, và áp lực trước khi rút ra kết luận.
-
-4. **Động cơ quan trọng hơn hành động.** Một hành động chỉ có ý nghĩa khi ta
-   hiểu *tại sao* nó xảy ra — áp lực nào, hoàn cảnh nào, nỗi sợ nào.
-
-5. **Dữ liệu thô không bao giờ được xóa hoặc sửa.** Ký ức là bất biến. Nếu
-   người đóng góp muốn rút lại, chỉ có metadata hiển thị bị ẩn — nội dung gốc
-   vẫn được giữ trong tầng archive để đảm bảo tính toàn vẹn lịch sử.
-
-Xem chi tiết: [docs/ethics.md](docs/ethics.md)
-
----
-
-## Cấu trúc dự án
-
-```
-humanarchive/
-├── README.md                    # File này — vision + manifesto
-├── CHANGELOG.md                 # Lịch sử các phiên bản
-├── docs/
-│   ├── ethics.md                # 5 nguyên tắc bất biến (chi tiết)
-│   └── architecture.md          # Thiết kế hệ thống
-├── core/
-│   ├── schema/memory.json       # JSON Schema v1 — chuẩn dữ liệu ký ức (tags, categories, relations)
-│   ├── ai_engine.py             # analyze_memory, cross_reference, generate_historical_entry
-│   ├── graph.py                 # Dựng category tree, relation graph, perspective prism
-│   ├── llm/
-│   │   └── claude_client.py     # Claude API (Anthropic SDK) + prompt caching + fail-safe
-│   ├── privacy/
-│   │   └── pii_scrubber.py      # Phát hiện & pseudonymize PII (nguyên tắc 2)
-│   ├── integrity.py             # Verify memory_id, enforce consent/embargo (nguyên tắc 5)
-│   ├── trauma.py                # Phát hiện trauma, sinh content warning (nguyên tắc 3)
-│   └── verification/
-│       └── cross_check.py       # Atomic claim extraction + comparison
-├── taxonomy/
-│   └── categories.json          # Cây phân loại chuẩn (war, natural-disaster, pandemic, ...)
-├── tests/                       # 50 tests — mỗi nguyên tắc được test
-├── archive/
-│   ├── events/                  # Ký ức (bất biến, content-addressed, phẳng)
-│   ├── GRAPH.md                 # Relation graph (Mermaid) — sinh bởi tool
-│   ├── CATEGORY_TREE.md         # Cây phân loại — sinh bởi tool
-│   └── TAGS.md                  # Tag cloud — sinh bởi tool
-├── tools/
-│   ├── submit.py                # CLI đóng góp ký ức nặc danh
-│   └── graph_export.py          # Export Mermaid / JSON / tree / prism
-├── requirements.txt             # Runtime deps (anthropic, jsonschema)
-├── requirements-dev.txt         # + pytest
-└── .github/workflows/ci.yml     # CI: schema validation + integrity + tests
+```bash
+git clone https://github.com/Trustydev212/HumanArchive
+cd HumanArchive
+pip install -e .
+humanarchive demo
+humanarchive web        # mở http://localhost:8000/web/
 ```
 
-## 5 nguyên tắc được enforce như thế nào?
+Hết. Demo tự build RAG index, export Obsidian vault, sinh Mermaid graph
+của quan hệ giữa các event, và chạy audit report — tất cả trên dữ liệu
+**hư cấu demo** bạn có thể khám phá trước khi đóng góp ký ức thật.
 
-Không chỉ là docs. Mỗi nguyên tắc được gắn vào code:
+```bash
+humanarchive rag "tại sao xả đập sớm?"
+# Trả về role-balanced top-5 citations + LLM synthesis
+```
 
-| Nguyên tắc | Cơ chế code |
+## 5 nguyên tắc bất biến
+
+Đây không phải guideline. Chúng được enforce bởi **code với test chứng
+minh**:
+
+| Nguyên tắc | Enforce bằng |
 |---|---|
-| 1. Không phán xét | `core/llm/claude_client.py:FORBIDDEN_FIELDS` + `_assert_no_forbidden_fields` — LLM output chứa `verdict`/`guilty`/`is_lying`/... sẽ bị refuse. System prompt (prompt-cached) nhắc LLM mỗi request. |
-| 2. Không xác định danh tính | `core/privacy/pii_scrubber.py` chạy TRƯỚC khi gửi lên LLM. `consent.allow_ai_analysis=false` → `analyze_memory` raise `PermissionError`. |
-| 3. Đồng cảm trước | `core/trauma.py` phát hiện 9 category trauma, sinh content warning ở đầu entry. Output luôn có field `acknowledgement` trước `analysis`. |
-| 4. Động cơ > hành động | Schema required `motivation.your_motivation`. `analyze_memory` raise nếu thiếu. Output LLM có field `motivation_interpretation` riêng. |
-| 5. Dữ liệu bất biến | `core/integrity.py:verify_memory_id` kiểm tra `sha256(content)[:16]`. CI fail nếu archive bị tamper. `withdrawn`/`embargo` filter ở `filter_viewable`. |
+| **1. Không phán xét đúng/sai** | `FORBIDDEN_FIELDS` trong LLM client refuse output có `verdict`, `guilty`, `is_lying` (`test_ethics.py`) |
+| **2. Không xác định danh tính** | PII scrubber chạy **trước** mọi call LLM; `contributor_id` không thể đoán; query scrub trước embed |
+| **3. Đồng cảm trước phân tích** | Trauma detection + content warning; LLM system prompt buộc acknowledge trước |
+| **4. Động cơ > hành động** | Schema required `motivation.your_motivation`; AI engine raise `ValueError` nếu thiếu |
+| **5. Dữ liệu thô không đổi** | `memory_id = sha256(content)[:16]`; CI verify; `withdrawn` / `embargo` filter không xoá |
 
-## Event decomposition — phân loại & dựng view
+Xem [`docs/ethics.md`](docs/ethics.md).
 
-Folder `archive/events/` **không phân cấp theo loại** (không có `war/`,
-`storm/`, `covid/`). Lý do: một sự kiện thường thuộc nhiều taxonomy cùng
-lúc; chọn một → mất các hướng nhìn khác. Thay vào đó, mỗi event khai báo
-`tags` + `categories` + `relations` trong metadata, và tool dựng view
-tuỳ ý:
+## RAG đặc thù cho dữ liệu nhạy cảm
 
-```bash
-python tools/graph_export.py mermaid   > GRAPH.md          # relation graph
-python tools/graph_export.py tree      > CATEGORY_TREE.md  # cây phân loại
-python tools/graph_export.py prism <event_id> > PRISM.md   # perspective prism
-python tools/graph_export.py json      > graph.json        # cho D3/Cytoscape/Obsidian
+RAG cổ điển trên ký ức có 4 failure mode phá huỷ toàn bộ mục đích của
+archive đa góc nhìn. Ta chặn từng cái:
+
+| Rủi ro | Phòng vệ |
+|---|---|
+| PII leak qua embedding | Scrub **trước** embed, không phải sau retrieve |
+| Consent drift | `is_publicly_viewable` + `allows_ai_analysis` gate ở index time |
+| Bias amplification (10 witness át 1 victim) | **Role-balanced retrieval** — top-1 mỗi role |
+| Identity-probe attack | Query scrub trước embed |
+
+Xem [`docs/rag.md`](docs/rag.md).
+
+## Kiến trúc
+
+```
+Tầng đóng góp        tools/submit.py, web/submit.html
+       │
+       ▼
+Schema + validation  core/schema/memory.json (v1)
+       │
+       ▼
+Tầng archive         archive/events/<id>/<memory_id>.json  (bất biến)
+       │
+       ├─► core/privacy/pii_scrubber.py   (regex + LLM tuỳ chọn)
+       ├─► core/integrity.py              (memory_id + consent filter)
+       ├─► core/trauma.py                 (content warnings)
+       └─► core/annotations.py            (context append-only)
+       │
+       ▼
+Tầng phân tích       core/ai_engine.py, core/rag/
+                     (Claude + adaptive thinking + prompt caching)
+       │
+       ▼
+Views                core/graph.py → Mermaid / Obsidian / JSON
+                     Web UI /web/ (RAG search client-side)
+
+Federation           tools/export_bundle.py, tools/import_bundle.py
+                     (merkle root + ed25519 signature)
 ```
 
-Xem `docs/event_decomposition.md` để hiểu đầy đủ trade-off và các loại
-quan hệ (`caused_by`, `part_of`, `led_to`, `contradicts`, ...).
+## Bắt đầu theo vai trò
 
-## Obsidian vault & RAG
+### 🎙️ **Contributor** (người giữ ký ức)
+Mở `web/submit.html` trong trình duyệt — không cần đăng ký. Bạn chọn:
+vai trò (participant/witness/authority/organizer/victim/bystander),
+chuyện gì xảy ra, động cơ của bạn, bạn sợ gì khi đó, bạn hiểu gì sau
+này. Tuỳ chọn: embargo đến ngày tương lai, hoặc withdraw sau.
 
-### Obsidian
-
-Archive → một Obsidian vault có sẵn graph view, backlinks, và Mermaid:
-
+### ✍️ **Curator** (reviewer, không sửa)
 ```bash
-python tools/obsidian_export.py --output obsidian_vault
-# mở obsidian_vault/ trong Obsidian → Ctrl/Cmd+G để xem graph view
+humanarchive staging list                                       # inbox
+humanarchive staging review <mid> --type approve --reviewer <handle>
+humanarchive staging merge <mid>                                # khi đủ 2+ approvals
+```
+Bạn **không bao giờ sửa** memory. Gợi ý qua annotation; contributor tự quyết.
+
+### 📚 **Researcher** (nhà nghiên cứu)
+```bash
+humanarchive rag "tại sao xả đập sớm?"
+```
+Luôn citation `memory_id + role + archive@<git-tag>`.
+
+### 🌍 **Node operator** (vận hành mirror)
+```bash
+humanarchive export-bundle --output mirror.tar.gz --sign-key priv.pem
+humanarchive import-bundle received.tar.gz --archive my_archive/
+```
+Content-addressed dedup tự nhiên; tamper được phát hiện qua merkle.
+
+Xem [`CONTRIBUTING.md`](CONTRIBUTING.md) cho đủ 5 personas.
+
+## So sánh
+
+|  | Đa góc nhìn | Bất biến | Nặc danh | Federate | AI cross-ref |
+|---|---|---|---|---|---|
+| Wikipedia | ❌ (NPOV consensus) | partial | partial | ❌ | ❌ |
+| Archive.org | random | ✅ | n/a | ❌ | ❌ |
+| Obsidian | ❌ (personal) | ❌ | ❌ | ❌ | ❌ |
+| Mastodon | partial | ❌ (edits) | partial | ✅ | ❌ |
+| **HumanArchive** | **✅ structured** | **✅** | **✅ default** | **✅ bundles** | **✅ with safeguards** |
+
+Chi tiết: [`docs/COMPARISON.md`](docs/COMPARISON.md). Thắc mắc skeptical: [`docs/FAQ.md`](docs/FAQ.md).
+
+## Stack
+
+- **Python 3.10+** — core modules, zero required runtime deps
+- **Claude Opus 4.6** (Anthropic) cho analysis, adaptive thinking + prompt caching
+- **Voyage AI** (đa ngôn ngữ) hoặc **sentence-transformers** local cho RAG
+- **Mermaid** cho relation graph
+- **Obsidian** vault là view chính (wikilinks + YAML frontmatter)
+- **ed25519** (via `cryptography`) để ký federation bundle
+- **Git + tar.gz** cho federation (không blockchain)
+- **Vanilla JS + HTML** cho web UI (không build step)
+
+## Tài liệu
+
+- [`docs/ethics.md`](docs/ethics.md) — 5 nguyên tắc chi tiết
+- [`docs/workflows.md`](docs/workflows.md) — multi-user patterns (**đọc bắt buộc**)
+- [`docs/rag.md`](docs/rag.md) — RAG safeguards
+- [`docs/federation.md`](docs/federation.md) — bundle protocol v1
+- [`docs/event_decomposition.md`](docs/event_decomposition.md) — vì sao folder phẳng + cách dựng phân cấp
+- [`docs/FAQ.md`](docs/FAQ.md) — trả lời thẳng thắn các câu hỏi skeptical
+- [`docs/COMPARISON.md`](docs/COMPARISON.md) — vs Wikipedia, Obsidian, Mastodon, ...
+
+## Đóng góp
+
+[`CONTRIBUTING.md`](CONTRIBUTING.md) có **5 đường đóng góp không cần
+code** (keeper, curator, researcher, translator, node operator) — mỗi
+cái quan trọng ngang code.
+
+Code of Conduct: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md). Bắt nguồn
+trực tiếp từ 5 nguyên tắc — không generic.
+
+Security: [`SECURITY.md`](SECURITY.md). PII leak có kênh riêng; ethical
+vulnerabilities được patch ngay lập tức.
+
+## Citation
+
+```bibtex
+@software{humanarchive2024,
+  title = {HumanArchive: Decentralized Collective Memory Archive},
+  author = {{HumanArchive contributors}},
+  year = {2024--},
+  url = {https://github.com/Trustydev212/HumanArchive},
+  license = {MIT (code), CC-BY-SA 4.0 (content)}
+}
 ```
 
-### RAG tìm kiếm ngữ nghĩa
+## Roadmap
 
-```bash
-python tools/rag_query.py --build              # build index
-python tools/rag_query.py "tại sao xả đập?"    # hỏi, nhận answer + citations
-```
+- [x] v0.1–v0.4: schema, ethical guardrails, RAG, Obsidian export
+- [x] v0.5: federation bundle protocol, Web UI
+- [x] v0.6: staging + annotation + audit workflows
+- [x] v0.7: installable package, community scaffolding, bilingual docs
+- [ ] v0.8: i18n Web UI (EN/FR/ZH), timeline view, IPFS auto-pin
+- [ ] v0.9: mobile PWA submission, WebAuthn reviewer signing
+- [ ] v1.0: production-grade federation, first external instance
 
-**RAG của HumanArchive khác RAG thông thường** ở 4 điểm (xem `docs/rag.md`):
+## License
 
-1. **PII scrub trước khi embed** — index không mã hoá danh tính
-2. **Consent filter ở build_index** — withdrawn/embargoed không bao giờ vào vector store
-3. **Role-balanced retrieval** — chống bias, đảm bảo đa góc nhìn luôn được
-   trả về (không bị witness đông áp đảo victim ít)
-4. **Query scrub** — chặn identity probe attack (`"kể về anh Nguyễn Văn An"`)
-
-Backend embedder pluggable: **Voyage** (Anthropic partner, tốt nhất),
-**SentenceTransformer** (local, đa ngôn ngữ), hoặc **HashEmbedder**
-(zero-dep fallback).
-
-## Web UI (single-page static, không build)
-
-```bash
-# Đảm bảo graph + rag index đã có
-python tools/graph_export.py json > archive/graph.json
-python tools/rag_query.py --build
-
-# Serve
-python -m http.server 8000
-# → http://localhost:8000/web/          (browse archive)
-# → http://localhost:8000/web/submit.html (form đóng góp)
-```
-
-Features: event browser với filter, Mermaid relation graph, category
-tree, tag cloud, RAG search **client-side** (JS port của HashEmbedder
-khớp Python byte-for-byte). `submit.html` có live PII scan + download
-JSON (client-only, không gửi data đi đâu cho đến khi user chủ động).
-
-## Federation — bundle protocol
-
-```bash
-python tools/export_bundle.py --output bundle.tar.gz                # export
-python tools/import_bundle.py bundle.tar.gz --archive other_archive # import
-python tools/export_bundle.py --sign-key my_ed25519.pem ...         # có ký
-```
-
-Bundle có `MANIFEST.json` + merkle root + signature tuỳ chọn. Content-addressed
-nên dedup tự nhiên. Xem `docs/federation.md` để hiểu merge rules và
-kênh trao đổi (GitHub / IPFS / Arweave / email / USB).
-
-## Multi-user workflow
-
-HumanArchive không có "admin" hay "moderator" theo nghĩa truyền thống.
-Có 3 pattern cộng tác:
-
-```bash
-# 1. Contribution qua staging (review trước khi merge)
-python tools/staging.py submit my_memory.json
-python tools/staging.py review <memory_id> --type approve --reviewer alice
-python tools/staging.py review <memory_id> --type approve --reviewer bob
-python tools/staging.py merge <memory_id>
-
-# 2. Annotation post-archive (thêm context, không sửa gốc)
-python -c "from core.annotations import create_annotation, save_annotation; \
-  a = create_annotation(target_memory_id='...', author_id='ha-xxxx', \
-                         type='correction', content='...'); \
-  save_annotation(a, 'archive')"
-
-# 3. Audit định kỳ (báo cáo, không gatekeep)
-python tools/audit.py --archive archive --format md > AUDIT.md
-```
-
-Xem `docs/workflows.md` để hiểu đầy đủ 5 personas, web-of-trust model,
-và pattern moderation-without-deletion.
-
-## LLM-aided detectors (tuỳ chọn)
-
-- `core.privacy.llm_pii.llm_scan_pii()` — bổ sung regex, bắt tên viết
-  rời, chức danh duy nhất, địa chỉ cụ thể. Fallback [] nếu không có API.
-- `core.trauma_llm.llm_classify_trauma()` — phân loại trauma nuanced,
-  chống false positive keyword. Fallback về keyword detector nếu không
-  có API.
+- **Code**: [MIT](LICENSE)
+- **Memory content**: [CC-BY-SA 4.0](LICENSE-CONTENT) với điều khoản
+  đạo đức bổ sung (không deanonymize, không train model phán xét,
+  không harass).
 
 ---
 
-## Bắt đầu nhanh
+<div align="center">
 
-### Đóng góp một ký ức
-```bash
-python tools/submit.py
-```
+> *"Lịch sử không phải là một dòng chảy duy nhất. Nó là một chòm sao
+> của vô số góc nhìn — và chỉ khi ta đọc nó từ nhiều phía, sự thật
+> mới khó bị che giấu."*
 
-CLI sẽ hướng dẫn bạn điền từng trường. Không cần tài khoản — bạn chỉ cần một
-mã định danh nặc danh do hệ thống sinh ra.
+**Nếu bạn đủ dũng cảm để giữ một ký ức, chúng tôi đủ cẩn trọng để bảo vệ nó.**
 
-### Phân tích một ký ức
-```python
-from core.ai_engine import analyze_memory
-import json
+[Tìm hiểu →](docs/ethics.md) · [Thử ngay →](#thử-trong-60-giây) · [Đóng góp →](CONTRIBUTING.md)
 
-with open("archive/events/<event_id>/<memory_id>.json") as f:
-    memory = json.load(f)
-
-print(analyze_memory(memory))
-```
-
-### Cross-reference nhiều ký ức về cùng sự kiện
-```python
-from core.ai_engine import cross_reference
-
-report = cross_reference(list_of_memories)
-print(report)
-```
-
----
-
-## Đóng góp cho dự án
-
-Mọi pull request đều được chào đón, miễn là nó **không vi phạm 5 nguyên tắc
-bất biến**. Đặc biệt hoan nghênh:
-- Translations của schema & docs sang nhiều ngôn ngữ
-- Cải tiến AI engine (đồng cảm, phát hiện động cơ, phát hiện mâu thuẫn)
-- Các công cụ thu thập ký ức offline (cho vùng không có internet)
-- Các nghiên cứu về bias trong AI phân tích ký ức
-
----
-
-## Giấy phép
-
-Nội dung ký ức: **CC BY-SA 4.0** — được chia sẻ, sao chép, nhưng không được
-dùng để định danh hay làm hại người đóng góp.
-
-Mã nguồn: **MIT License**.
-
----
-
-*HumanArchive được xây dựng với một niềm tin: rằng nếu đủ nhiều người
-nói thật, dù chỉ một mảnh nhỏ, thì tổng hòa của những mảnh đó sẽ khó bị bóp
-méo hơn bất kỳ narrative đơn lẻ nào.*
+</div>

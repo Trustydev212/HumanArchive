@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-label="HumanArchive">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#faf7f0"/>
+      <stop offset="1" stop-color="#f0e8d4"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#8b4513" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#8b4513" stop-opacity="0"/>
+    </radialGradient>
+    <style>
+      .title { font: 700 68px system-ui, -apple-system, "Segoe UI", sans-serif; fill: #2a1a0a; letter-spacing: -0.02em; }
+      .tag   { font: 400 20px system-ui, -apple-system, "Segoe UI", sans-serif; fill: #5a4a35; letter-spacing: 0.01em; }
+      .small { font: 400 14px system-ui, -apple-system, "Segoe UI", sans-serif; fill: #7a6a55; }
+      .voice { fill: #8b4513; }
+      .thread { stroke: #8b4513; stroke-width: 1; opacity: 0.35; fill: none; }
+    </style>
+  </defs>
+  <rect width="1200" height="360" fill="url(#bg)"/>
+
+  <!-- Constellation of voices radiating from a central event -->
+  <g transform="translate(950, 180)">
+    <circle r="180" fill="url(#glow)"/>
+    <circle r="8" class="voice"/>
+    <!-- 7 voices (one per role + one extra) as small dots at varying distances -->
+    <g>
+      <line x1="0" y1="0" x2="-120" y2="-60" class="thread"/>
+      <line x1="0" y1="0" x2="110" y2="-90" class="thread"/>
+      <line x1="0" y1="0" x2="140" y2="30" class="thread"/>
+      <line x1="0" y1="0" x2="60" y2="130" class="thread"/>
+      <line x1="0" y1="0" x2="-80" y2="110" class="thread"/>
+      <line x1="0" y1="0" x2="-150" y2="20" class="thread"/>
+      <line x1="0" y1="0" x2="-60" y2="-130" class="thread"/>
+    </g>
+    <circle cx="-120" cy="-60" r="5" class="voice"/>
+    <circle cx="110"  cy="-90" r="5" class="voice"/>
+    <circle cx="140"  cy="30"  r="5" class="voice"/>
+    <circle cx="60"   cy="130" r="5" class="voice"/>
+    <circle cx="-80"  cy="110" r="5" class="voice"/>
+    <circle cx="-150" cy="20"  r="5" class="voice"/>
+    <circle cx="-60"  cy="-130" r="5" class="voice"/>
+  </g>
+
+  <g transform="translate(72, 140)">
+    <text class="title">HumanArchive</text>
+    <text class="tag" y="42">Lưu trữ ký ức tập thể phi tập trung của nhân loại</text>
+    <text class="tag" y="70" style="font-style:italic">Decentralized collective memory — without judgment.</text>
+    <text class="small" y="120">
+      <tspan>Mọi góc nhìn — participant · witness · authority · organizer · victim · bystander — đều có giá trị.</tspan>
+    </text>
+    <text class="small" y="140">
+      <tspan>Every perspective has value. Every memory is immutable.</tspan>
+    </text>
+  </g>
+</svg>
