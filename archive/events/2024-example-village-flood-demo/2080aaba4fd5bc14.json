@@ -6,7 +6,16 @@
     "event_id": "2024-example-village-flood-demo",
     "name": "Lũ làng A (hư cấu)",
     "date": "2024-09-10",
-    "location": "Làng A, vùng trung du (hư cấu)"
+    "location": "Làng A, vùng trung du (hư cấu)",
+    "tags": [
+      "lũ-lụt",
+      "thuỷ-điện",
+      "hư-cấu"
+    ],
+    "categories": [
+      "natural-disaster/flood",
+      "technological/infrastructure-failure"
+    ]
   },
   "perspective": {
     "role": "witness",
@@ -23,7 +32,14 @@
     "fears_at_the_time": "Sợ mẹ tôi bị kẹt trên giường, mẹ không đi được."
   },
   "context": {
-    "what_learned_after": "Sau này tôi mới biết, đập thủy điện trên thượng nguồn đã xả lũ mà không báo. Nhưng lúc đó thì không ai biết."
+    "what_learned_after": "Sau này tôi mới biết, đập thuỷ điện trên thượng nguồn đã xả lũ mà không báo. Nhưng lúc đó thì không ai biết.",
+    "relations": [
+      {
+        "event_id": "2024-example-dam-release-demo",
+        "type": "caused_by",
+        "note": "Nghe nói là do xả đập."
+      }
+    ]
   },
   "consent": {
     "public": true,
@@ -32,5 +48,5 @@
     "allow_ai_analysis": true
   },
   "language": "vi",
-  "memory_id": "71a057cb260b8909"
+  "memory_id": "2080aaba4fd5bc14"
 }

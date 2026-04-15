@@ -11,22 +11,28 @@
 
 ## Điểm trùng khớp giữa nhiều góc nhìn
 
-- `chúng` — được nhắc bởi 2 người.
-- `nhưng` — được nhắc bởi 2 người.
-- `nhiều` — được nhắc bởi 2 người.
 - `tiếng` — được nhắc bởi 2 người.
 - `không` — được nhắc bởi 2 người.
+- `nhiều` — được nhắc bởi 2 người.
+- `nhưng` — được nhắc bởi 2 người.
+- `chúng` — được nhắc bởi 2 người.
 
 ## Điểm khác biệt giữa các góc nhìn
 
 ### Địa điểm cụ thể của sự kiện
-- **victim** kể: Làng A, nhà ở ven đồng (hư cấu)
 - **witness** kể: Làng A, vùng trung du (hư cấu)
-- **authority** kể: Phòng điều hành thủy điện (hư cấu)
+- **victim** kể: Làng A, nhà ở ven đồng (hư cấu)
+- **authority** kể: Phòng điều hành thuỷ điện (hư cấu)
 > Không xác định đúng/sai. Người khác nhau có thể ở vùng khác nhau của cùng sự kiện.
 
 
 ## Các ký ức gốc (ẩn danh, đã scrub PII)
+
+### Góc nhìn: **witness**
+
+Sáng hôm đó nước lên nhanh lắm, chưa bao giờ thấy nhanh như thế. Tôi đang nấu cơm thì nghe tiếng ai đó hét. Ra sân thì đã ngập tới gối. Mấy nhà dưới đồng chạy lên làng tôi. Không ai kịp mang gì theo.
+
+> **Động cơ tự nhận:** Tôi ra sân là vì tưởng có người kêu cứu. Không phải anh hùng gì cả, phản xạ thôi.
 
 ### Góc nhìn: **victim**
 
@@ -35,12 +41,6 @@
 Nhà tôi ở ngay bờ đồng. Khi nước lên, chồng tôi <person:đ.> làm xa. Tôi bế con nhỏ chạy lên đồi. <person:đ.> có nhiều người. Chúng tôi mất nhà, mất toàn bộ <person:đ.>. Nhưng người thì còn.
 
 > **Động cơ tự nhận:** Tôi chạy là vì con. Nếu một mình thì tôi có khi <person:đ.> lại với cái nhà của mình.
-
-### Góc nhìn: **witness**
-
-Sáng hôm đó nước lên nhanh lắm, chưa bao giờ thấy nhanh như thế. Tôi đang nấu cơm thì nghe tiếng ai đó hét. Ra sân thì đã ngập tới gối. Mấy nhà dưới đồng chạy lên làng tôi. Không ai kịp mang gì theo.
-
-> **Động cơ tự nhận:** Tôi ra sân là vì tưởng có người kêu cứu. Không phải anh hùng gì cả, phản xạ thôi.
 
 ### Góc nhìn: **authority**
 

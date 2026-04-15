@@ -1,0 +1,88 @@
+{
+  "nodes": [
+    {
+      "event_id": "2024-example-dam-release-demo",
+      "name": "Quyết định xả đập (hư cấu)",
+      "date": "2024-09-09",
+      "location": "Trung tâm điều hành thuỷ điện (hư cấu)",
+      "tags": [
+        "hư-cấu",
+        "quyết-định-khó",
+        "thuỷ-điện"
+      ],
+      "categories": [
+        "technological/infrastructure-failure"
+      ],
+      "memory_count": 1,
+      "roles_present": [
+        "authority"
+      ]
+    },
+    {
+      "event_id": "2024-example-village-flood-demo",
+      "name": "Lũ làng A (hư cấu)",
+      "date": "2024-09-10",
+      "location": "Làng A, vùng trung du (hư cấu)",
+      "tags": [
+        "hư-cấu",
+        "lũ-lụt",
+        "mất-nhà",
+        "thuỷ-điện"
+      ],
+      "categories": [
+        "humanitarian/displacement",
+        "natural-disaster/flood",
+        "technological/infrastructure-failure"
+      ],
+      "memory_count": 3,
+      "roles_present": [
+        "authority",
+        "victim",
+        "witness"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "2024-example-village-flood-demo",
+      "target": "2024-example-dam-release-demo",
+      "type": "caused_by",
+      "note": "Nghe nói là do xả đập."
+    },
+    {
+      "source": "2024-example-village-flood-demo",
+      "target": "2024-example-dam-release-demo",
+      "type": "aftermath_of"
+    },
+    {
+      "source": "2024-example-village-flood-demo",
+      "target": "2024-example-dam-release-demo",
+      "type": "part_of"
+    }
+  ],
+  "tag_counts": {
+    "hư-cấu": 2,
+    "thuỷ-điện": 2,
+    "quyết-định-khó": 1,
+    "lũ-lụt": 1,
+    "mất-nhà": 1
+  },
+  "category_tree": {
+    "technological": {
+      "infrastructure-failure": [
+        "2024-example-dam-release-demo",
+        "2024-example-village-flood-demo"
+      ]
+    },
+    "humanitarian": {
+      "displacement": [
+        "2024-example-village-flood-demo"
+      ]
+    },
+    "natural-disaster": {
+      "flood": [
+        "2024-example-village-flood-demo"
+      ]
+    }
+  }
+}

@@ -49,6 +49,16 @@
         "location": {
           "type": "string",
           "description": "Địa điểm — không bắt buộc chính xác. Có thể là 'Sài Gòn', 'đâu đó ở Trường Sơn', 'không nhớ rõ'."
+        },
+        "tags": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,40}$"},
+          "description": "Tag tự do, viết thường-gạch-nối. VD: ['chiến-tranh', 'việt-nam', 'di-cư']. Một event có thể có nhiều tag."
+        },
+        "categories": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[a-z0-9-]+(/[a-z0-9-]+)*$"},
+          "description": "Đường dẫn category từ taxonomy/categories.json. VD: ['conflict/war/civil-war', 'humanitarian/displacement']. Một event có thể thuộc nhiều taxonomy."
         }
       }
     },
@@ -131,7 +141,32 @@
         "related_event_ids": {
           "type": "array",
           "items": {"type": "string"},
-          "description": "Các event_id liên quan."
+          "description": "Các event_id liên quan (dạng đơn giản, không ghi rõ quan hệ)."
+        },
+        "relations": {
+          "type": "array",
+          "description": "Quan hệ có cấu trúc giữa event này và event khác. Dùng để dựng graph.",
+          "items": {
+            "type": "object",
+            "required": ["event_id", "type"],
+            "properties": {
+              "event_id": {"type": "string"},
+              "type": {
+                "type": "string",
+                "enum": [
+                  "part_of",
+                  "caused_by",
+                  "led_to",
+                  "happened_during",
+                  "contradicts",
+                  "corroborates",
+                  "aftermath_of"
+                ],
+                "description": "Loại quan hệ. 'contradicts' và 'corroborates' KHÔNG phán xét đúng/sai — chỉ mô tả trạng thái dữ liệu."
+              },
+              "note": {"type": "string", "description": "Ghi chú bổ sung về quan hệ (tuỳ chọn)."}
+            }
+          }
         }
       }
     },

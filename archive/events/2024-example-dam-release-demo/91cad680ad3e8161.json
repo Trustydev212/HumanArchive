@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "contributor_id": "ha-demo-0004",
+  "submitted_at": "2024-09-25T10:00:00+00:00",
+  "event": {
+    "event_id": "2024-example-dam-release-demo",
+    "name": "Quyết định xả đập (hư cấu)",
+    "date": "2024-09-09",
+    "location": "Trung tâm điều hành thuỷ điện (hư cấu)",
+    "tags": [
+      "thuỷ-điện",
+      "quyết-định-khó",
+      "hư-cấu"
+    ],
+    "categories": [
+      "technological/infrastructure-failure"
+    ]
+  },
+  "perspective": {
+    "role": "authority",
+    "proximity": "direct",
+    "age_at_event": 51
+  },
+  "memory": {
+    "what_happened": "Đêm 9/9, tôi là người duyệt lệnh. Dữ liệu mưa đầu nguồn cho thấy hồ sẽ tràn trong 6 tiếng. Chọn xả sớm — chấp nhận lũ hạ du — hay chờ thêm rồi có thể mất đập? Tôi chọn xả."
+  },
+  "motivation": {
+    "your_motivation": "Tôi cân nhắc mạng của hàng nghìn người ở hạ du so với tài sản. Không có lựa chọn sạch.",
+    "external_pressure": "Quy trình và áp lực từ cấp trên. Thời gian rất gấp."
+  },
+  "context": {
+    "would_do_differently": "Tôi sẽ đấu tranh để có hệ thống cảnh báo độc lập, và minh bạch hoá quyết định với dân."
+  },
+  "consent": {
+    "public": true,
+    "embargo_until": null,
+    "withdrawn": false,
+    "allow_ai_analysis": true
+  },
+  "language": "vi",
+  "memory_id": "91cad680ad3e8161"
+}

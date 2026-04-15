@@ -6,7 +6,16 @@
     "event_id": "2024-example-village-flood-demo",
     "name": "Ngày nước lên",
     "date": "2024-09-10",
-    "location": "Làng A, nhà ở ven đồng (hư cấu)"
+    "location": "Làng A, nhà ở ven đồng (hư cấu)",
+    "tags": [
+      "lũ-lụt",
+      "mất-nhà",
+      "hư-cấu"
+    ],
+    "categories": [
+      "natural-disaster/flood",
+      "humanitarian/displacement"
+    ]
   },
   "perspective": {
     "role": "victim",
@@ -22,7 +31,13 @@
     "fears_at_the_time": "Sợ con chết trong tay mình."
   },
   "context": {
-    "what_learned_after": "Tôi từng giận bên thủy điện lắm. Sau này đọc tin thấy họ cũng bất lực trong thời điểm đó. Giờ tôi giận cái hệ thống nhiều hơn giận con người cụ thể."
+    "what_learned_after": "Tôi từng giận bên thuỷ điện lắm. Sau này đọc tin thấy họ cũng bất lực trong thời điểm đó. Giờ tôi giận cái hệ thống nhiều hơn giận con người cụ thể.",
+    "relations": [
+      {
+        "event_id": "2024-example-dam-release-demo",
+        "type": "aftermath_of"
+      }
+    ]
   },
   "consent": {
     "public": true,
@@ -31,5 +46,5 @@
     "allow_ai_analysis": true
   },
   "language": "vi",
-  "memory_id": "14e0724310a34418"
+  "memory_id": "7cb3c65efc24254b"
 }

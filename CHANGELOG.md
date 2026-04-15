@@ -1,5 +1,41 @@
 # Changelog
 
+## [v0.3] — Event decomposition & graph views
+
+Trả lời câu hỏi: "Có nên chia folder theo loại sự kiện (war/, storm/,
+covid/) không?" → Không, folder giữ phẳng (immutable), nhưng thêm lớp
+metadata (tags, categories, relations) để dựng view phân cấp.
+
+### Thêm mới
+
+- `taxonomy/categories.json` — cây phân loại chuẩn với 8 root (conflict,
+  natural-disaster, public-health, humanitarian, economic, social-movement,
+  technological, personal-collective). Mỗi node có `label_vi` + `label_en`.
+- `core/graph.py` — `load_archive_graph()`, `build_perspective_prism()`,
+  `EventNode`, `GraphEdge`, `ArchiveGraph`. Dựng graph từ archive phẳng,
+  tôn trọng consent filtering.
+- `tools/graph_export.py` — CLI xuất Mermaid / JSON / category tree /
+  tag cloud / perspective prism.
+- `docs/event_decomposition.md` — giải thích quyết định kiến trúc
+  (flat physical + rich metadata + generated views).
+- `tests/test_graph.py` — 9 tests: loading, edges, categories, prism,
+  consent filtering trong graph.
+- Demo event thứ 2 `2024-example-dam-release-demo` + relation edges
+  (`caused_by`, `part_of`, `aftermath_of`) nối với event lũ.
+
+### Schema v1 (backward compatible)
+
+- `event.tags`: string[] — tag tự do viết thường-gạch-nối.
+- `event.categories`: string[] — path taxonomy, một event có thể có nhiều.
+- `context.relations`: [{event_id, type, note?}] — quan hệ có cấu trúc
+  với 7 loại (part_of, caused_by, led_to, happened_during, contradicts,
+  corroborates, aftermath_of). `contradicts`/`corroborates` KHÔNG phán
+  xét đúng/sai — chỉ mô tả trạng thái dữ liệu.
+
+### Tổng test suite: 50 tests pass (41 → 50).
+
+---
+
 ## [v0.2] — Enforce 5 nguyên tắc ở tầng code
 
 Không còn chỉ là scaffolding. Các nguyên tắc đạo đức giờ được enforce bằng

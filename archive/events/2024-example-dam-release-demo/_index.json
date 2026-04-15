@@ -1,0 +1,13 @@
+{
+  "event_id": "2024-example-dam-release-demo",
+  "is_sample_data": true,
+  "disclaimer": "Dữ liệu mẫu hoàn toàn hư cấu.",
+  "memories": [
+    {
+      "memory_id": "91cad680ad3e8161",
+      "role": "authority",
+      "submitted_at": "2024-09-25T10:00:00+00:00",
+      "public": true
+    }
+  ]
+}

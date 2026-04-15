@@ -61,8 +61,9 @@ humanarchive/
 │   ├── ethics.md                # 5 nguyên tắc bất biến (chi tiết)
 │   └── architecture.md          # Thiết kế hệ thống
 ├── core/
-│   ├── schema/memory.json       # JSON Schema v1 — chuẩn dữ liệu ký ức
+│   ├── schema/memory.json       # JSON Schema v1 — chuẩn dữ liệu ký ức (tags, categories, relations)
 │   ├── ai_engine.py             # analyze_memory, cross_reference, generate_historical_entry
+│   ├── graph.py                 # Dựng category tree, relation graph, perspective prism
 │   ├── llm/
 │   │   └── claude_client.py     # Claude API (Anthropic SDK) + prompt caching + fail-safe
 │   ├── privacy/
@@ -71,9 +72,17 @@ humanarchive/
 │   ├── trauma.py                # Phát hiện trauma, sinh content warning (nguyên tắc 3)
 │   └── verification/
 │       └── cross_check.py       # Atomic claim extraction + comparison
-├── tests/                       # 41 tests — mỗi nguyên tắc được test
-├── archive/events/              # Ký ức (bất biến, content-addressed)
-├── tools/submit.py              # CLI đóng góp ký ức nặc danh
+├── taxonomy/
+│   └── categories.json          # Cây phân loại chuẩn (war, natural-disaster, pandemic, ...)
+├── tests/                       # 50 tests — mỗi nguyên tắc được test
+├── archive/
+│   ├── events/                  # Ký ức (bất biến, content-addressed, phẳng)
+│   ├── GRAPH.md                 # Relation graph (Mermaid) — sinh bởi tool
+│   ├── CATEGORY_TREE.md         # Cây phân loại — sinh bởi tool
+│   └── TAGS.md                  # Tag cloud — sinh bởi tool
+├── tools/
+│   ├── submit.py                # CLI đóng góp ký ức nặc danh
+│   └── graph_export.py          # Export Mermaid / JSON / tree / prism
 ├── requirements.txt             # Runtime deps (anthropic, jsonschema)
 ├── requirements-dev.txt         # + pytest
 └── .github/workflows/ci.yml     # CI: schema validation + integrity + tests
@@ -90,6 +99,24 @@ Không chỉ là docs. Mỗi nguyên tắc được gắn vào code:
 | 3. Đồng cảm trước | `core/trauma.py` phát hiện 9 category trauma, sinh content warning ở đầu entry. Output luôn có field `acknowledgement` trước `analysis`. |
 | 4. Động cơ > hành động | Schema required `motivation.your_motivation`. `analyze_memory` raise nếu thiếu. Output LLM có field `motivation_interpretation` riêng. |
 | 5. Dữ liệu bất biến | `core/integrity.py:verify_memory_id` kiểm tra `sha256(content)[:16]`. CI fail nếu archive bị tamper. `withdrawn`/`embargo` filter ở `filter_viewable`. |
+
+## Event decomposition — phân loại & dựng view
+
+Folder `archive/events/` **không phân cấp theo loại** (không có `war/`,
+`storm/`, `covid/`). Lý do: một sự kiện thường thuộc nhiều taxonomy cùng
+lúc; chọn một → mất các hướng nhìn khác. Thay vào đó, mỗi event khai báo
+`tags` + `categories` + `relations` trong metadata, và tool dựng view
+tuỳ ý:
+
+```bash
+python tools/graph_export.py mermaid   > GRAPH.md          # relation graph
+python tools/graph_export.py tree      > CATEGORY_TREE.md  # cây phân loại
+python tools/graph_export.py prism <event_id> > PRISM.md   # perspective prism
+python tools/graph_export.py json      > graph.json        # cho D3/Cytoscape/Obsidian
+```
+
+Xem `docs/event_decomposition.md` để hiểu đầy đủ trade-off và các loại
+quan hệ (`caused_by`, `part_of`, `led_to`, `contradicts`, ...).
 
 ---
 

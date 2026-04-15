@@ -1,0 +1,126 @@
+{
+  "_meta": {
+    "description": "Taxonomy seed cho HumanArchive. Cây phân loại sự kiện, phục vụ việc dựng view phân cấp. Mỗi event có thể thuộc NHIỀU category — đây không phải là phân loại độc quyền.",
+    "version": "0.1",
+    "principles": [
+      "Taxonomy là một TRONG NHIỀU cách xem dữ liệu, không phải là ontology duy nhất.",
+      "Cộng đồng có thể mở rộng qua PR. Không xóa category cũ (gây break các event đã gán).",
+      "Nhãn luôn trung lập — không dùng từ phán xét như 'sự kiện xấu', 'thảm họa do người X gây ra'."
+    ]
+  },
+  "categories": {
+    "conflict": {
+      "label_vi": "Xung đột",
+      "label_en": "Conflict",
+      "children": {
+        "war": {
+          "label_vi": "Chiến tranh",
+          "label_en": "War",
+          "children": {
+            "civil-war": {"label_vi": "Nội chiến", "label_en": "Civil war"},
+            "interstate-war": {"label_vi": "Chiến tranh giữa các quốc gia", "label_en": "Interstate war"},
+            "colonial-war": {"label_vi": "Chiến tranh thuộc địa / giành độc lập", "label_en": "Colonial / independence war"},
+            "cold-war-proxy": {"label_vi": "Chiến tranh uỷ nhiệm / Chiến tranh Lạnh", "label_en": "Proxy / Cold War"}
+          }
+        },
+        "civil-unrest": {
+          "label_vi": "Biến động dân sự",
+          "label_en": "Civil unrest",
+          "children": {
+            "protest": {"label_vi": "Biểu tình", "label_en": "Protest"},
+            "riot": {"label_vi": "Bạo loạn", "label_en": "Riot"},
+            "coup": {"label_vi": "Đảo chính", "label_en": "Coup"}
+          }
+        },
+        "persecution": {
+          "label_vi": "Bức hại / đàn áp",
+          "label_en": "Persecution",
+          "children": {
+            "political": {"label_vi": "Chính trị", "label_en": "Political"},
+            "religious": {"label_vi": "Tôn giáo", "label_en": "Religious"},
+            "ethnic": {"label_vi": "Dân tộc / sắc tộc", "label_en": "Ethnic"}
+          }
+        }
+      }
+    },
+    "natural-disaster": {
+      "label_vi": "Thiên tai",
+      "label_en": "Natural disaster",
+      "children": {
+        "storm": {"label_vi": "Bão", "label_en": "Storm / typhoon / hurricane"},
+        "flood": {"label_vi": "Lũ lụt", "label_en": "Flood"},
+        "earthquake": {"label_vi": "Động đất", "label_en": "Earthquake"},
+        "tsunami": {"label_vi": "Sóng thần", "label_en": "Tsunami"},
+        "wildfire": {"label_vi": "Cháy rừng", "label_en": "Wildfire"},
+        "drought": {"label_vi": "Hạn hán", "label_en": "Drought"},
+        "landslide": {"label_vi": "Sạt lở đất", "label_en": "Landslide"}
+      }
+    },
+    "public-health": {
+      "label_vi": "Y tế công cộng",
+      "label_en": "Public health",
+      "children": {
+        "pandemic": {
+          "label_vi": "Đại dịch",
+          "label_en": "Pandemic",
+          "children": {
+            "covid-19": {"label_vi": "COVID-19", "label_en": "COVID-19"},
+            "hiv-aids": {"label_vi": "HIV/AIDS", "label_en": "HIV/AIDS"},
+            "sars": {"label_vi": "SARS", "label_en": "SARS"}
+          }
+        },
+        "epidemic-local": {"label_vi": "Dịch bệnh địa phương", "label_en": "Local epidemic"},
+        "healthcare-failure": {"label_vi": "Thất bại hệ thống y tế", "label_en": "Healthcare system failure"}
+      }
+    },
+    "humanitarian": {
+      "label_vi": "Nhân đạo",
+      "label_en": "Humanitarian",
+      "children": {
+        "displacement": {"label_vi": "Di dời bắt buộc", "label_en": "Forced displacement"},
+        "refugee-crisis": {"label_vi": "Khủng hoảng tị nạn", "label_en": "Refugee crisis"},
+        "famine": {"label_vi": "Nạn đói", "label_en": "Famine"},
+        "mass-migration": {"label_vi": "Di cư lớn", "label_en": "Mass migration"}
+      }
+    },
+    "economic": {
+      "label_vi": "Kinh tế",
+      "label_en": "Economic",
+      "children": {
+        "financial-crisis": {"label_vi": "Khủng hoảng tài chính", "label_en": "Financial crisis"},
+        "hyperinflation": {"label_vi": "Siêu lạm phát", "label_en": "Hyperinflation"},
+        "land-reform": {"label_vi": "Cải cách ruộng đất", "label_en": "Land reform"},
+        "nationalization": {"label_vi": "Quốc hữu hóa", "label_en": "Nationalization"}
+      }
+    },
+    "social-movement": {
+      "label_vi": "Phong trào xã hội",
+      "label_en": "Social movement",
+      "children": {
+        "civil-rights": {"label_vi": "Quyền công dân", "label_en": "Civil rights"},
+        "labor": {"label_vi": "Lao động / công đoàn", "label_en": "Labor"},
+        "environmental": {"label_vi": "Môi trường", "label_en": "Environmental"},
+        "womens-rights": {"label_vi": "Nữ quyền", "label_en": "Women's rights"}
+      }
+    },
+    "technological": {
+      "label_vi": "Công nghệ",
+      "label_en": "Technological",
+      "children": {
+        "industrial-accident": {"label_vi": "Tai nạn công nghiệp", "label_en": "Industrial accident"},
+        "infrastructure-failure": {"label_vi": "Hỏng hạ tầng", "label_en": "Infrastructure failure"},
+        "cyber-incident": {"label_vi": "Sự cố mạng", "label_en": "Cyber incident"}
+      }
+    },
+    "personal-collective": {
+      "label_vi": "Cá nhân mang tính tập thể",
+      "label_en": "Personal but collective",
+      "description": "Những sự kiện cá nhân nhưng xảy ra đồng thời với hàng triệu người khác — sinh, tử, kết hôn trong thời chiến, mất người thân, v.v.",
+      "children": {
+        "birth-under-crisis": {"label_vi": "Sinh ra trong khủng hoảng", "label_en": "Birth under crisis"},
+        "loss-of-family": {"label_vi": "Mất người thân", "label_en": "Loss of family"},
+        "separation": {"label_vi": "Chia lìa", "label_en": "Separation"}
+      }
+    }
+  }
+}
