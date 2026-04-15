@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "description": "Danh sách reviewer được cộng đồng vouch. Mỗi entry chứa public key ed25519 (hex) + handle + info tối thiểu. Vouching chain là một danh sách reviewer_id đã tin tưởng reviewer này.",
+    "version": "1.0",
+    "threshold_approvals_default": 2,
+    "policy": [
+      "Thêm reviewer mới qua PR; cần ít nhất 2 reviewer hiện có vouch.",
+      "Revoke reviewer qua PR; cần 3 reviewer hiện có + document lý do ở COMMENTS.",
+      "Không xoá entry — chỉ bật status=revoked (nguyên tắc 5).",
+      "Pubkey thay đổi = entry mới (không update in-place)."
+    ]
+  },
+  "reviewers": []
+}

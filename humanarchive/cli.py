@@ -63,6 +63,9 @@ Subcommands (quick reference):
   obsidian         Sinh Obsidian vault từ archive
   staging ...      Staging workflow: list, submit, review, merge
   audit            Audit report chất lượng archive
+  timeline         Sinh HTML timeline theo trục thời gian
+  diff A B         So sánh 2 archive hoặc 2 bundle
+  verify-signatures Verify ed25519 signatures trên annotations
   export-bundle    Export archive thành bundle.tar.gz (federation)
   import-bundle    Import bundle từ node khác
   version          In version

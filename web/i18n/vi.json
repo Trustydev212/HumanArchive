@@ -1,0 +1,62 @@
+{
+  "_meta": {"language": "Tiếng Việt", "code": "vi"},
+  "site.title": "HumanArchive",
+  "site.tagline": "Lưu trữ ký ức tập thể phi tập trung. Không phán xét — chỉ lắng nghe.",
+
+  "nav.overview": "Overview",
+  "nav.events": "Events",
+  "nav.graph": "Graph",
+  "nav.search": "RAG search",
+  "nav.contribute": "+ Đóng góp",
+
+  "overview.loading": "Đang tải archive/graph.json…",
+  "overview.principles_title": "5 nguyên tắc bất biến",
+  "overview.p1": "Không phán xét đúng/sai — AI không kết luận ai đúng ai sai.",
+  "overview.p2": "Không xác định danh tính — PII được scrub trước khi hiển thị/index.",
+  "overview.p3": "Luôn đồng cảm trước khi phân tích — trauma được cảnh báo, không gatekeep.",
+  "overview.p4": "Động cơ quan trọng hơn hành động — every memory bắt buộc có motivation.",
+  "overview.p5": "Dữ liệu thô không đổi — withdrawn/embargo filter, memory_id = sha256 verifiable.",
+
+  "stats.events": "events đã công bố",
+  "stats.memories": "ký ức tổng",
+  "stats.edges": "quan hệ khai báo",
+  "stats.roles": "role có mặt",
+  "stats.tags": "tag",
+
+  "events.filter_placeholder": "Lọc theo tên, tag, category…",
+  "events.filter_all_categories": "(mọi category)",
+  "events.filter_all_roles": "(mọi role)",
+  "events.no_match": "Không có event nào khớp.",
+  "events.memories_count": "ký ức",
+  "events.perspectives_count": "góc nhìn",
+
+  "graph.description": "Mỗi node là một event, edge là quan hệ (caused_by, part_of, ...). Render bằng Mermaid.",
+  "graph.loading": "Đang tải…",
+  "graph.category_tree_title": "Category tree",
+  "graph.tag_cloud_title": "Tag cloud",
+
+  "search.description_html": "Tìm kiếm ngữ nghĩa qua <code>archive/rag_index.json</code>. Query được <strong>scrub PII</strong> trước khi embed (chống identity-probe). Kết quả được <strong>role-balanced</strong> (chống bias amplification).",
+  "search.placeholder": "Hỏi archive bằng tiếng Việt… VD: tại sao xả đập sớm?",
+  "search.button": "Tìm",
+  "search.index_ready": "Index sẵn sàng: {n} entries, embedder={embedder}, dim={dim}",
+  "search.index_missing": "Index chưa có — chạy: python tools/rag_query.py --build",
+  "search.incompatible_embedder_html": "⚠ Index dùng <code>{embedder}</code>. Web UI chỉ match được với HashEmbedder. Dùng CLI <code>python tools/rag_query.py</code> thay thế.",
+  "search.query_scrubbed": "Query (scrubbed): \"{q}\" · {n} kết quả (role-balanced).",
+  "search.no_hits": "Không có ký ức nào phù hợp. Có thể vì chưa ai kể về chủ đề này, hoặc đang bị embargo/withdrawn.",
+
+  "modal.event_id": "event_id",
+  "modal.date": "Ngày",
+  "modal.location": "Địa điểm",
+  "modal.categories": "Categories",
+  "modal.tags": "Tags",
+  "modal.roles_present": "Roles có mặt",
+  "modal.memory_count": "Số ký ức",
+  "modal.no_date": "(không rõ)",
+  "modal.no_location": "(không rõ)",
+  "modal.no_categories": "(chưa phân loại)",
+  "modal.no_tags": "(không có)",
+  "modal.hint": "Để xem nội dung ký ức chi tiết, mở Obsidian vault hoặc đọc file JSON trong archive/.",
+
+  "footer.github": "GitHub",
+  "footer.ethics_link": "Xem docs/ethics.md để hiểu các nguyên tắc bất biến."
+}

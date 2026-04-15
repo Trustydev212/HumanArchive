@@ -1,0 +1,62 @@
+{
+  "_meta": {"language": "English", "code": "en"},
+  "site.title": "HumanArchive",
+  "site.tagline": "Decentralized collective memory archive. Without judgment — only listening.",
+
+  "nav.overview": "Overview",
+  "nav.events": "Events",
+  "nav.graph": "Graph",
+  "nav.search": "RAG search",
+  "nav.contribute": "+ Contribute",
+
+  "overview.loading": "Loading archive/graph.json…",
+  "overview.principles_title": "The 5 immutable principles",
+  "overview.p1": "No verdicts — AI never concludes who is right or wrong.",
+  "overview.p2": "Never identify anyone — PII is scrubbed before display/index.",
+  "overview.p3": "Empathy before analysis — trauma is warned, never gated.",
+  "overview.p4": "Motivation matters more than action — every memory requires it.",
+  "overview.p5": "Raw data never changes — withdrawn/embargo filter, memory_id = verifiable sha256.",
+
+  "stats.events": "published events",
+  "stats.memories": "total memories",
+  "stats.edges": "declared relations",
+  "stats.roles": "roles present",
+  "stats.tags": "tags",
+
+  "events.filter_placeholder": "Filter by name, tag, category…",
+  "events.filter_all_categories": "(all categories)",
+  "events.filter_all_roles": "(all roles)",
+  "events.no_match": "No events match.",
+  "events.memories_count": "memories",
+  "events.perspectives_count": "perspectives",
+
+  "graph.description": "Each node is an event; edges are relations (caused_by, part_of, ...). Rendered with Mermaid.",
+  "graph.loading": "Loading…",
+  "graph.category_tree_title": "Category tree",
+  "graph.tag_cloud_title": "Tag cloud",
+
+  "search.description_html": "Semantic search over <code>archive/rag_index.json</code>. Queries are <strong>PII-scrubbed</strong> before embedding (anti identity-probe). Results are <strong>role-balanced</strong> (anti bias amplification).",
+  "search.placeholder": "Ask the archive… e.g. why did they release the dam early?",
+  "search.button": "Search",
+  "search.index_ready": "Index ready: {n} entries, embedder={embedder}, dim={dim}",
+  "search.index_missing": "Index not built yet — run: python tools/rag_query.py --build",
+  "search.incompatible_embedder_html": "⚠ Index uses <code>{embedder}</code>. Web UI only matches HashEmbedder. Use CLI <code>python tools/rag_query.py</code> instead.",
+  "search.query_scrubbed": "Query (scrubbed): \"{q}\" · {n} results (role-balanced).",
+  "search.no_hits": "No matching memories. Either no one has told this story yet, or they are currently embargoed/withdrawn.",
+
+  "modal.event_id": "event_id",
+  "modal.date": "Date",
+  "modal.location": "Location",
+  "modal.categories": "Categories",
+  "modal.tags": "Tags",
+  "modal.roles_present": "Roles present",
+  "modal.memory_count": "Memories",
+  "modal.no_date": "(unknown)",
+  "modal.no_location": "(unknown)",
+  "modal.no_categories": "(uncategorized)",
+  "modal.no_tags": "(none)",
+  "modal.hint": "To read a memory in full, open the Obsidian vault or the JSON file in archive/.",
+
+  "footer.github": "GitHub",
+  "footer.ethics_link": "See docs/ethics.md for the immutable principles."
+}
