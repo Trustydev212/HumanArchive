@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ethics-and-integrity:
+    name: Ethics + integrity check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Validate memory schema
+        run: |
+          python -c "import json, jsonschema; schema=json.load(open('core/schema/memory.json')); jsonschema.Draft7Validator.check_schema(schema); print('schema OK')"
+
+      - name: Verify archive integrity (memory_id hashes)
+        run: |
+          python -c "
+          from core.integrity import verify_archive
+          bad = verify_archive('archive')
+          if bad:
+              print('TAMPERED memories detected:')
+              for r in bad:
+                  print('  claimed=', r.claimed, 'actual=', r.actual)
+              raise SystemExit(1)
+          print('archive integrity OK')
+          "
+
+      - name: Run test suite (ethics, privacy, integrity)
+        run: pytest tests/ -v --tb=short
+
+      - name: Ensure sample historical entry still generates
+        run: |
+          python -c "
+          from core.ai_engine import generate_historical_entry
+          entry = generate_historical_entry('2024-example-village-flood-demo')
+          assert 'KHÔNG' in entry or 'không' in entry
+          assert len(entry) > 500
+          print('sample entry OK, length=', len(entry))
+          "

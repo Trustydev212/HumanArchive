@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "contributor_id": "ha-demo-0002",
+  "submitted_at": "2024-09-20T15:30:00+00:00",
+  "event": {
+    "event_id": "2024-example-village-flood-demo",
+    "name": "Xả lũ vùng trung du",
+    "date": "2024-09-10",
+    "location": "Phòng điều hành thủy điện (hư cấu)"
+  },
+  "perspective": {
+    "role": "authority",
+    "proximity": "direct",
+    "age_at_event": 42
+  },
+  "memory": {
+    "what_happened": "Chúng tôi nhận lệnh xả từ 5h sáng. Dung lượng hồ đã vượt ngưỡng an toàn đêm trước. Quy trình báo trước cho xã là 2 tiếng — nhưng điện mất, đường dây hư hỏng nhiều chỗ. Chúng tôi đã gọi được bốn xã, ba xã còn lại không liên lạc được.",
+    "emotional_state": "Tôi cảm thấy bất lực. Biết là sẽ có người bị ảnh hưởng mà không làm gì khác được."
+  },
+  "motivation": {
+    "your_motivation": "Nếu không xả, đập có thể vỡ và cả vùng hạ du sẽ bị cuốn trôi hoàn toàn. Giữa hai cái tệ, chọn cái đỡ tệ hơn.",
+    "external_pressure": "Lệnh từ cấp trên là ưu tiên cứu đập. Không có lựa chọn khác.",
+    "fears_at_the_time": "Sợ nếu đập vỡ thì hàng nghìn người sẽ chết."
+  },
+  "context": {
+    "what_learned_after": "Nhìn lại, tôi nghĩ quy trình cảnh báo cần được cải tổ hoàn toàn. Không thể dựa vào điện thoại.",
+    "would_do_differently": "Tôi sẽ đề nghị có còi báo động độc lập với lưới điện ở mỗi xã hạ du."
+  },
+  "consent": {
+    "public": true,
+    "embargo_until": null,
+    "withdrawn": false,
+    "allow_ai_analysis": true
+  },
+  "language": "vi",
+  "memory_id": "d4842c4d766d5dc3"
+}

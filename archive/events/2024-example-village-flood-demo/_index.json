@@ -1,0 +1,25 @@
+{
+  "event_id": "2024-example-village-flood-demo",
+  "is_sample_data": true,
+  "disclaimer": "Đây là dữ liệu MẪU hoàn toàn HƯ CẤU, dùng để minh hoạ pipeline. Không phải sự kiện có thật và không đại diện cho bất kỳ ai.",
+  "memories": [
+    {
+      "memory_id": "71a057cb260b8909",
+      "role": "witness",
+      "submitted_at": "2024-09-15T10:00:00+00:00",
+      "public": true
+    },
+    {
+      "memory_id": "d4842c4d766d5dc3",
+      "role": "authority",
+      "submitted_at": "2024-09-20T15:30:00+00:00",
+      "public": true
+    },
+    {
+      "memory_id": "14e0724310a34418",
+      "role": "victim",
+      "submitted_at": "2024-10-02T08:00:00+00:00",
+      "public": true
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "contributor_id": "ha-demo-0001",
+  "submitted_at": "2024-09-15T10:00:00+00:00",
+  "event": {
+    "event_id": "2024-example-village-flood-demo",
+    "name": "Lũ làng A (hư cấu)",
+    "date": "2024-09-10",
+    "location": "Làng A, vùng trung du (hư cấu)"
+  },
+  "perspective": {
+    "role": "witness",
+    "proximity": "direct",
+    "age_at_event": 58
+  },
+  "memory": {
+    "what_happened": "Sáng hôm đó nước lên nhanh lắm, chưa bao giờ thấy nhanh như thế. Tôi đang nấu cơm thì nghe tiếng ai đó hét. Ra sân thì đã ngập tới gối. Mấy nhà dưới đồng chạy lên làng tôi. Không ai kịp mang gì theo.",
+    "sensory_details": "Nước đục ngầu, có mùi bùn và xăng dầu. Tiếng chó sủa khắp nơi.",
+    "emotional_state": "Tôi sợ, nhưng không dám hoảng vì còn mẹ già ở nhà."
+  },
+  "motivation": {
+    "your_motivation": "Tôi ra sân là vì tưởng có người kêu cứu. Không phải anh hùng gì cả, phản xạ thôi.",
+    "fears_at_the_time": "Sợ mẹ tôi bị kẹt trên giường, mẹ không đi được."
+  },
+  "context": {
+    "what_learned_after": "Sau này tôi mới biết, đập thủy điện trên thượng nguồn đã xả lũ mà không báo. Nhưng lúc đó thì không ai biết."
+  },
+  "consent": {
+    "public": true,
+    "embargo_until": null,
+    "withdrawn": false,
+    "allow_ai_analysis": true
+  },
+  "language": "vi",
+  "memory_id": "71a057cb260b8909"
+}

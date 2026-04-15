@@ -56,21 +56,40 @@ Xem chi tiết: [docs/ethics.md](docs/ethics.md)
 ```
 humanarchive/
 ├── README.md                    # File này — vision + manifesto
+├── CHANGELOG.md                 # Lịch sử các phiên bản
 ├── docs/
 │   ├── ethics.md                # 5 nguyên tắc bất biến (chi tiết)
 │   └── architecture.md          # Thiết kế hệ thống
 ├── core/
-│   ├── schema/
-│   │   └── memory.json          # Chuẩn dữ liệu ký ức (JSON Schema)
-│   ├── ai_engine.py             # AI phân tích động cơ + cross-reference
+│   ├── schema/memory.json       # JSON Schema v1 — chuẩn dữ liệu ký ức
+│   ├── ai_engine.py             # analyze_memory, cross_reference, generate_historical_entry
+│   ├── llm/
+│   │   └── claude_client.py     # Claude API (Anthropic SDK) + prompt caching + fail-safe
+│   ├── privacy/
+│   │   └── pii_scrubber.py      # Phát hiện & pseudonymize PII (nguyên tắc 2)
+│   ├── integrity.py             # Verify memory_id, enforce consent/embargo (nguyên tắc 5)
+│   ├── trauma.py                # Phát hiện trauma, sinh content warning (nguyên tắc 3)
 │   └── verification/
-│       ├── __init__.py
-│       └── cross_check.py       # Logic xác thực chéo
-├── archive/
-│   └── events/                  # Ký ức đã được lưu trữ (theo event_id)
-└── tools/
-    └── submit.py                # CLI đóng góp ký ức
+│       └── cross_check.py       # Atomic claim extraction + comparison
+├── tests/                       # 41 tests — mỗi nguyên tắc được test
+├── archive/events/              # Ký ức (bất biến, content-addressed)
+├── tools/submit.py              # CLI đóng góp ký ức nặc danh
+├── requirements.txt             # Runtime deps (anthropic, jsonschema)
+├── requirements-dev.txt         # + pytest
+└── .github/workflows/ci.yml     # CI: schema validation + integrity + tests
 ```
+
+## 5 nguyên tắc được enforce như thế nào?
+
+Không chỉ là docs. Mỗi nguyên tắc được gắn vào code:
+
+| Nguyên tắc | Cơ chế code |
+|---|---|
+| 1. Không phán xét | `core/llm/claude_client.py:FORBIDDEN_FIELDS` + `_assert_no_forbidden_fields` — LLM output chứa `verdict`/`guilty`/`is_lying`/... sẽ bị refuse. System prompt (prompt-cached) nhắc LLM mỗi request. |
+| 2. Không xác định danh tính | `core/privacy/pii_scrubber.py` chạy TRƯỚC khi gửi lên LLM. `consent.allow_ai_analysis=false` → `analyze_memory` raise `PermissionError`. |
+| 3. Đồng cảm trước | `core/trauma.py` phát hiện 9 category trauma, sinh content warning ở đầu entry. Output luôn có field `acknowledgement` trước `analysis`. |
+| 4. Động cơ > hành động | Schema required `motivation.your_motivation`. `analyze_memory` raise nếu thiếu. Output LLM có field `motivation_interpretation` riêng. |
+| 5. Dữ liệu bất biến | `core/integrity.py:verify_memory_id` kiểm tra `sha256(content)[:16]`. CI fail nếu archive bị tamper. `withdrawn`/`embargo` filter ở `filter_viewable`. |
 
 ---
 

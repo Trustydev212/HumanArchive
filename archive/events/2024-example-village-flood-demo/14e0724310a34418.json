@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "contributor_id": "ha-demo-0003",
+  "submitted_at": "2024-10-02T08:00:00+00:00",
+  "event": {
+    "event_id": "2024-example-village-flood-demo",
+    "name": "Ngày nước lên",
+    "date": "2024-09-10",
+    "location": "Làng A, nhà ở ven đồng (hư cấu)"
+  },
+  "perspective": {
+    "role": "victim",
+    "proximity": "direct",
+    "age_at_event": 29
+  },
+  "memory": {
+    "what_happened": "Nhà tôi ở ngay bờ đồng. Khi nước lên, chồng tôi đang đi làm xa. Tôi bế con nhỏ chạy lên đồi. Trên đồi đã có nhiều người. Chúng tôi mất nhà, mất toàn bộ đồ đạc. Nhưng người thì còn.",
+    "emotional_state": "Tê dại. Mấy tuần sau tôi không khóc được. Mãi sau này mới khóc."
+  },
+  "motivation": {
+    "your_motivation": "Tôi chạy là vì con. Nếu một mình thì tôi có khi đã đứng lại với cái nhà của mình.",
+    "fears_at_the_time": "Sợ con chết trong tay mình."
+  },
+  "context": {
+    "what_learned_after": "Tôi từng giận bên thủy điện lắm. Sau này đọc tin thấy họ cũng bất lực trong thời điểm đó. Giờ tôi giận cái hệ thống nhiều hơn giận con người cụ thể."
+  },
+  "consent": {
+    "public": true,
+    "embargo_until": null,
+    "withdrawn": false,
+    "allow_ai_analysis": true
+  },
+  "language": "vi",
+  "memory_id": "14e0724310a34418"
+}

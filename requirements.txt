@@ -1,0 +1,9 @@
+# Runtime dependencies. Không có gì bắt buộc — project chạy được với Python
+# chuẩn. Các thư viện dưới đây chỉ cần nếu bật các tính năng tương ứng.
+
+# Claude API — cần để analyze_memory / generate_historical_entry có LLM thật.
+# Nếu không cài, engine sẽ fallback về stub an toàn.
+anthropic>=0.40.0
+
+# Schema validation cho CLI submit (tuỳ chọn — submit.py đã có validator nội bộ).
+jsonschema>=4.0.0

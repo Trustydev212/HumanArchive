@@ -1,18 +1,14 @@
-"""
-HumanArchive — AI Engine
+"""HumanArchive — AI Engine (v0.2)
 
 Chịu trách nhiệm phân tích ký ức mà không vi phạm 5 nguyên tắc bất biến
 (xem docs/ethics.md).
 
-Thiết kế:
-    * Không phán xét đúng/sai (nguyên tắc 1)
-    * Không bao giờ trả về trường "verdict", "guilty", "lying", ...
-    * Luôn đồng cảm trước khi phân tích (nguyên tắc 3)
-    * Ưu tiên phân tích động cơ (nguyên tắc 4)
-    * Mọi output phải kèm trường `uncertainty` để độc giả biết độ không chắc chắn
-
-Module này cố tình tách phần `LLMClient` ra interface để có thể thay thế
-bằng nhiều backend khác nhau (Claude, local LLM, hoặc mock cho test).
+Cải tiến so với v0.1:
+    * Gọi Claude thật (claude-opus-4-6, adaptive thinking, prompt-cached system)
+    * Tự scrub PII trước khi gửi lên LLM (nguyên tắc 2)
+    * Tự phát hiện trauma và thêm content warning (nguyên tắc 3)
+    * Tự verify memory_id và tôn trọng consent/embargo (nguyên tắc 5)
+    * Tự reject output nếu LLM trả về các trường phán xét (nguyên tắc 1)
 """
 
 from __future__ import annotations
@@ -20,65 +16,21 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
-from typing import Any, Iterable, Protocol
+from typing import Any, Iterable
+
+from .integrity import (
+    allows_ai_analysis,
+    filter_viewable,
+    is_publicly_viewable,
+    verify_memory_id,
+)
+from .llm import ClaudeClient, get_default_client
+from .privacy import PIIFinding, find_pii, pseudonymize
+from .trauma import TraumaAssessment, detect_trauma
 
 log = logging.getLogger(__name__)
-
-
-# --------------------------------------------------------------------------
-# Prompt fragments — tách riêng để dễ audit và dịch.
-# --------------------------------------------------------------------------
-
-EMPATHY_PREFIX_VI = (
-    "Trước khi phân tích, hãy ghi nhận rằng người kể đã trải qua một sự kiện "
-    "có thật. Đừng dùng ngôn ngữ lạnh lùng. Đừng kết luận ai đúng ai sai. "
-    "Nhiệm vụ của bạn là HIỂU, không phải PHÁN XÉT."
-)
-
-EMPATHY_PREFIX_EN = (
-    "Before analysis: acknowledge that the narrator lived through a real event. "
-    "Do not use cold or clinical language. Do not conclude who is right or wrong. "
-    "Your job is to UNDERSTAND, not to JUDGE."
-)
-
-MOTIVATION_PROMPT = (
-    "Given this memory, describe in neutral and empathetic language:\n"
-    "1. What the narrator perceived as their own motivation.\n"
-    "2. What external pressures likely shaped the situation (if stated).\n"
-    "3. What fears or constraints were in play.\n"
-    "Never say the narrator 'really' meant something different from what they said. "
-    "Your analysis is an interpretation offered alongside their words, never replacing them."
-)
-
-
-# --------------------------------------------------------------------------
-# LLM backend interface
-# --------------------------------------------------------------------------
-
-class LLMClient(Protocol):
-    """Interface tối thiểu cho một LLM backend. Cho phép thay đổi tự do."""
-
-    def complete(self, system: str, user: str, *, max_tokens: int = 1024) -> str: ...
-
-
-@dataclass
-class EchoLLM:
-    """LLM giả lập dùng trong test/offline. Không gọi mạng.
-
-    Trả về một JSON string có cấu trúc hợp lệ để pipeline tiếp tục chạy.
-    """
-
-    def complete(self, system: str, user: str, *, max_tokens: int = 1024) -> str:
-        # Không phân tích thực sự — chỉ trả về một stub an toàn.
-        return json.dumps(
-            {
-                "acknowledgement": "Tôi ghi nhận trải nghiệm của bạn.",
-                "notes": "LLM backend chưa được cấu hình. Đây là output stub.",
-                "uncertainty": "high",
-            },
-            ensure_ascii=False,
-        )
 
 
 # --------------------------------------------------------------------------
@@ -86,7 +38,6 @@ class EchoLLM:
 # --------------------------------------------------------------------------
 
 def _require(memory: dict, path: str) -> Any:
-    """Truy cập trường bắt buộc trong memory, raise nếu thiếu."""
     node: Any = memory
     for part in path.split("."):
         if not isinstance(node, dict) or part not in node:
@@ -104,7 +55,43 @@ def _safe(memory: dict, path: str, default: Any = None) -> Any:
     return node
 
 
-def _format_memory_for_prompt(memory: dict) -> str:
+def _scrubbed_view(memory: dict) -> tuple[dict, list[PIIFinding]]:
+    """Trả về (clone đã scrub PII, danh sách finding) để gửi lên LLM.
+
+    Scrub:
+        * memory.what_happened / sensory_details / emotional_state
+        * motivation.your_motivation / external_pressure / fears_at_the_time
+        * context.what_learned_after / would_do_differently
+    """
+    clone = json.loads(json.dumps(memory))  # deep copy an toàn
+    all_findings: list[PIIFinding] = []
+
+    def scrub(d: dict, key: str) -> None:
+        val = d.get(key)
+        if isinstance(val, str) and val:
+            findings = find_pii(val)
+            if findings:
+                all_findings.extend(findings)
+                d[key] = pseudonymize(val, findings)
+
+    mem = clone.get("memory")
+    if isinstance(mem, dict):
+        for k in ("what_happened", "sensory_details", "emotional_state"):
+            scrub(mem, k)
+    motiv = clone.get("motivation")
+    if isinstance(motiv, dict):
+        for k in ("your_motivation", "external_pressure", "fears_at_the_time"):
+            scrub(motiv, k)
+    ctx = clone.get("context")
+    if isinstance(ctx, dict):
+        for k in ("what_learned_after", "would_do_differently"):
+            scrub(ctx, k)
+
+    return clone, all_findings
+
+
+def _prompt_body(memory: dict) -> str:
+    """Tóm tắt memory thành JSON ngắn gọn để đưa vào user prompt."""
     return json.dumps(
         {
             "event": memory.get("event"),
@@ -119,22 +106,21 @@ def _format_memory_for_prompt(memory: dict) -> str:
 
 
 # --------------------------------------------------------------------------
-# Public API
+# Single-memory analysis
 # --------------------------------------------------------------------------
 
 @dataclass
 class MemoryAnalysis:
-    """Kết quả phân tích một ký ức đơn lẻ."""
-
     memory_id: str
-    acknowledgement: str  # Lời ghi nhận đồng cảm, PHẢI xuất hiện đầu tiên
+    acknowledgement: str
     motivation_interpretation: str
     external_pressure_interpretation: str
     emotional_state_note: str
-    uncertainty: str  # "low" | "medium" | "high"
-    raw_llm_output: str = field(repr=False, default="")
+    uncertainty: str
+    trauma: TraumaAssessment
+    pii_scrubbed: int  # số PII đã scrub trước khi gửi LLM
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict:
         return {
             "memory_id": self.memory_id,
             "acknowledgement": self.acknowledgement,
@@ -142,82 +128,87 @@ class MemoryAnalysis:
             "external_pressure_interpretation": self.external_pressure_interpretation,
             "emotional_state_note": self.emotional_state_note,
             "uncertainty": self.uncertainty,
+            "trauma": self.trauma.to_dict(),
+            "pii_scrubbed_count": self.pii_scrubbed,
         }
 
 
-def analyze_memory(memory: dict, *, llm: LLMClient | None = None) -> MemoryAnalysis:
-    """Phân tích một ký ức đơn lẻ, tập trung vào động cơ và trạng thái cảm xúc.
+def analyze_memory(memory: dict, *, llm: ClaudeClient | None = None) -> MemoryAnalysis:
+    """Phân tích một ký ức đơn lẻ.
 
-    KHÔNG kết luận đúng/sai. KHÔNG đánh giá độ tin cậy dựa trên vị trí xã hội.
-    Luôn bắt đầu bằng lời ghi nhận đồng cảm.
+    Enforcements:
+        * consent.allow_ai_analysis phải bật (nguyên tắc 2)
+        * motivation.your_motivation phải có (nguyên tắc 4)
+        * PII được scrub trước khi gửi lên LLM (nguyên tắc 2)
+        * Trauma được phát hiện và kèm content warning (nguyên tắc 3)
+        * LLM không được trả về trường phán xét (nguyên tắc 1)
     """
-    if not _safe(memory, "consent.allow_ai_analysis", True):
+    if not allows_ai_analysis(memory):
         raise PermissionError(
-            "Memory này được đóng góp với allow_ai_analysis=false. "
-            "Tôn trọng consent — không phân tích."
+            "Memory có allow_ai_analysis=false. Tôn trọng consent — không phân tích."
         )
 
     memory_id = _require(memory, "memory_id")
     _require(memory, "motivation.your_motivation")  # nguyên tắc 4
 
-    client = llm or EchoLLM()
+    trauma = detect_trauma(memory)
+    scrubbed, findings = _scrubbed_view(memory)
+    client = llm or get_default_client()
 
-    system_prompt = (
-        f"{EMPATHY_PREFIX_VI}\n\n{EMPATHY_PREFIX_EN}\n\n"
-        "Respond ONLY as a single JSON object with these fields: "
-        '"acknowledgement", "motivation_interpretation", '
-        '"external_pressure_interpretation", "emotional_state_note", '
-        '"uncertainty" (one of "low"|"medium"|"high"). '
-        "Never include a field named verdict, judgment, guilty, lying, or similar."
+    user_prompt = (
+        "Dưới đây là một ký ức cá nhân đã được ẩn danh. Hãy phân tích theo "
+        "đúng định dạng JSON với các trường: acknowledgement, "
+        "motivation_interpretation, external_pressure_interpretation, "
+        "emotional_state_note, uncertainty (low|medium|high). "
+        "Trả về JSON thôi, không kèm giải thích khác.\n\n"
+        "MEMORY:\n" + _prompt_body(scrubbed)
     )
-    user_prompt = MOTIVATION_PROMPT + "\n\nMEMORY:\n" + _format_memory_for_prompt(memory)
 
-    raw = client.complete(system_prompt, user_prompt)
-    parsed = _parse_llm_json(raw)
+    try:
+        parsed = client.complete_json(user_prompt)
+    except ValueError as exc:
+        # LLM vi phạm nguyên tắc 1 — refuse thay vì propagate
+        log.error("LLM output vi phạm nguyên tắc 1: %s", exc)
+        parsed = {
+            "acknowledgement": "Tôi ghi nhận trải nghiệm của bạn.",
+            "motivation_interpretation": "",
+            "external_pressure_interpretation": "",
+            "emotional_state_note": "",
+            "uncertainty": "high",
+            "_refused": str(exc),
+        }
 
     return MemoryAnalysis(
         memory_id=memory_id,
-        acknowledgement=parsed.get("acknowledgement", ""),
-        motivation_interpretation=parsed.get("motivation_interpretation", ""),
-        external_pressure_interpretation=parsed.get("external_pressure_interpretation", ""),
-        emotional_state_note=parsed.get("emotional_state_note", ""),
-        uncertainty=parsed.get("uncertainty", "high"),
-        raw_llm_output=raw,
+        acknowledgement=str(parsed.get("acknowledgement", "")),
+        motivation_interpretation=str(parsed.get("motivation_interpretation", "")),
+        external_pressure_interpretation=str(parsed.get("external_pressure_interpretation", "")),
+        emotional_state_note=str(parsed.get("emotional_state_note", "")),
+        uncertainty=str(parsed.get("uncertainty", "high")),
+        trauma=trauma,
+        pii_scrubbed=len(findings),
     )
-
-
-def _parse_llm_json(raw: str) -> dict[str, Any]:
-    """Parse JSON từ output của LLM một cách phòng thủ."""
-    try:
-        return json.loads(raw)
-    except json.JSONDecodeError:
-        # Thử trích đoạn JSON đầu tiên nếu LLM trả về kèm văn bản.
-        start = raw.find("{")
-        end = raw.rfind("}")
-        if start != -1 and end != -1 and end > start:
-            try:
-                return json.loads(raw[start : end + 1])
-            except json.JSONDecodeError:
-                pass
-        log.warning("Không parse được JSON từ LLM, trả về dict rỗng.")
-        return {}
 
 
 # --------------------------------------------------------------------------
 # Cross-reference
 # --------------------------------------------------------------------------
 
+ALL_ROLES = ("participant", "witness", "authority", "organizer", "victim", "bystander")
+
+
 @dataclass
 class CrossReferenceReport:
     event_id: str
     memory_count: int
     roles_present: list[str]
-    convergent_claims: list[dict[str, Any]]
-    divergent_claims: list[dict[str, Any]]
+    convergent_claims: list[dict]
+    divergent_claims: list[dict]
     missing_perspectives: list[str]
     uncertainty: str
+    integrity_issues: list[dict] = field(default_factory=list)
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> dict:
         return {
             "event_id": self.event_id,
             "memory_count": self.memory_count,
@@ -226,70 +217,90 @@ class CrossReferenceReport:
             "divergent_claims": self.divergent_claims,
             "missing_perspectives": self.missing_perspectives,
             "uncertainty": self.uncertainty,
+            "integrity_issues": self.integrity_issues,
             "note": (
-                "Báo cáo này KHÔNG kết luận ai đúng ai sai. "
-                "Các điểm divergent chỉ phản ánh sự khác biệt trong trải nghiệm "
-                "và góc nhìn của từng người. Mỗi góc nhìn đều có giá trị."
+                "Báo cáo này KHÔNG kết luận ai đúng ai sai. Các điểm divergent "
+                "chỉ phản ánh sự khác biệt trong trải nghiệm và góc nhìn của "
+                "từng người. Mỗi góc nhìn đều có giá trị."
             ),
         }
 
 
-ALL_ROLES = ("participant", "witness", "authority", "organizer", "victim", "bystander")
-
-
-def cross_reference(memories: Iterable[dict], *, llm: LLMClient | None = None) -> CrossReferenceReport:
-    """So khớp nhiều ký ức về cùng một sự kiện, tìm điểm trùng và điểm khác.
-
-    KHÔNG xếp hạng sự đáng tin. KHÔNG nói ai "đúng". Chỉ trình bày.
-    """
+def cross_reference(
+    memories: Iterable[dict], *, llm: ClaudeClient | None = None
+) -> CrossReferenceReport:
+    """So khớp nhiều ký ức về cùng sự kiện. Không xếp hạng sự đáng tin."""
     memories = list(memories)
     if not memories:
         raise ValueError("cross_reference cần ít nhất 1 memory.")
 
     event_ids = {_require(m, "event.event_id") for m in memories}
     if len(event_ids) != 1:
-        raise ValueError(
-            f"Tất cả memories phải cùng event_id. Tìm thấy: {event_ids}"
-        )
+        raise ValueError(f"Tất cả memories phải cùng event_id. Tìm thấy: {event_ids}")
     event_id = next(iter(event_ids))
 
-    roles_present = sorted({_safe(m, "perspective.role") for m in memories if _safe(m, "perspective.role")})
+    # Integrity check: phát hiện memory có memory_id không khớp hash
+    integrity_issues: list[dict] = []
+    for m in memories:
+        rep = verify_memory_id(m)
+        if rep.tampered:
+            integrity_issues.append(
+                {
+                    "claimed": rep.claimed,
+                    "actual": rep.actual,
+                    "note": "memory_id không khớp với hash nội dung — có thể bị sửa đổi.",
+                }
+            )
+
+    roles_present = sorted({
+        _safe(m, "perspective.role") for m in memories if _safe(m, "perspective.role")
+    })
     missing = [r for r in ALL_ROLES if r not in roles_present]
 
-    convergent, divergent = _compare_claims(memories, llm=llm)
+    convergent, divergent = _compare_claims(memories)
 
-    uncertainty = "low" if len(memories) >= 5 and len(roles_present) >= 3 else "medium" if len(memories) >= 2 else "high"
+    # Uncertainty: càng nhiều góc nhìn đa dạng → càng chắc chắn
+    n = len(memories)
+    if n >= 5 and len(roles_present) >= 3:
+        uncertainty = "low"
+    elif n >= 2:
+        uncertainty = "medium"
+    else:
+        uncertainty = "high"
 
     return CrossReferenceReport(
         event_id=event_id,
-        memory_count=len(memories),
+        memory_count=n,
         roles_present=roles_present,
         convergent_claims=convergent,
         divergent_claims=divergent,
         missing_perspectives=missing,
         uncertainty=uncertainty,
+        integrity_issues=integrity_issues,
     )
 
 
-def _compare_claims(memories: list[dict], *, llm: LLMClient | None) -> tuple[list[dict], list[dict]]:
-    """So sánh các claim atomic trong từng memory.
+def _compare_claims(memories: list[dict]) -> tuple[list[dict], list[dict]]:
+    """So sánh keyword chồng lấp giữa các memory + chênh lệch địa điểm.
 
-    Triển khai v1: rút gọn thành so khớp keyword thô trên `what_happened`.
-    v2 sẽ dùng LLM + atomic claim extraction.
+    v1 đơn giản, v2 sẽ dùng LLM để trích atomic claim có cấu trúc.
     """
     from collections import Counter
+    import math
 
     tokens_per_memory: list[set[str]] = []
     for m in memories:
         text = (_safe(m, "memory.what_happened") or "").lower()
-        tokens = {w.strip(".,;:\"'!?") for w in text.split() if len(w) >= 5}
-        tokens_per_memory.append(tokens)
+        toks = {
+            w.strip(".,;:\"'!?()[]{}")
+            for w in text.split()
+            if len(w.strip(".,;:\"'!?()[]{}")) >= 5
+        }
+        tokens_per_memory.append(toks)
 
     if not tokens_per_memory:
         return [], []
 
-    # Convergent: tokens xuất hiện ở >= ceil(n/2) memories
-    import math
     threshold = max(2, math.ceil(len(tokens_per_memory) / 2))
     counter: Counter[str] = Counter()
     for toks in tokens_per_memory:
@@ -301,7 +312,6 @@ def _compare_claims(memories: list[dict], *, llm: LLMClient | None) -> tuple[lis
         if count >= threshold
     ]
 
-    # Divergent (v1 placeholder): chênh lệch thời gian/địa điểm nếu có
     divergent: list[dict] = []
     locations = {_safe(m, "event.location") for m in memories if _safe(m, "event.location")}
     if len(locations) > 1:
@@ -309,13 +319,13 @@ def _compare_claims(memories: list[dict], *, llm: LLMClient | None) -> tuple[lis
             {
                 "claim": "Địa điểm cụ thể của sự kiện",
                 "perspectives": [
-                    {
-                        "role": _safe(m, "perspective.role"),
-                        "says": _safe(m, "event.location"),
-                    }
+                    {"role": _safe(m, "perspective.role"), "says": _safe(m, "event.location")}
                     for m in memories
                 ],
-                "note": "Không xác định đúng/sai. Người khác nhau có thể ở vùng khác nhau của cùng sự kiện.",
+                "note": (
+                    "Không xác định đúng/sai. Người khác nhau có thể ở "
+                    "vùng khác nhau của cùng sự kiện."
+                ),
             }
         )
 
@@ -323,65 +333,106 @@ def _compare_claims(memories: list[dict], *, llm: LLMClient | None) -> tuple[lis
 
 
 # --------------------------------------------------------------------------
-# Historical entry generator
+# Historical entry
 # --------------------------------------------------------------------------
 
-def generate_historical_entry(event_id: str, *, archive_root: Path | str = "archive", llm: LLMClient | None = None) -> str:
-    """Tạo một entry lịch sử đa góc nhìn từ tất cả memories của một event.
+def generate_historical_entry(
+    event_id: str,
+    *,
+    archive_root: Path | str = "archive",
+    llm: ClaudeClient | None = None,
+    as_of: date | None = None,
+) -> str:
+    """Tạo entry lịch sử đa góc nhìn từ toàn bộ memories của một event.
 
-    Output là Markdown, nhằm đọc được bởi con người — kể cả các thế hệ sau.
-    Mọi trích dẫn đều được dán nhãn role, không nêu danh tính.
+    Tôn trọng:
+        * consent.public / withdrawn / embargo_until
+        * Ẩn danh hoàn toàn (chỉ role, không contributor_id)
+        * Thêm content warning nếu có trauma
     """
     root = Path(archive_root) / "events" / event_id
     if not root.exists():
         raise FileNotFoundError(f"Không tìm thấy event_id={event_id} trong {root}")
 
-    memories: list[dict] = []
+    all_memories: list[dict] = []
     for p in sorted(root.glob("*.json")):
-        if p.name.startswith("_"):
+        if p.name.startswith("_") or ".amend." in p.name:
             continue
-        if ".amend." in p.name:
+        try:
+            with p.open(encoding="utf-8") as f:
+                mem = json.load(f)
+        except (OSError, json.JSONDecodeError):
             continue
-        with p.open(encoding="utf-8") as f:
-            mem = json.load(f)
-        if _safe(mem, "consent.withdrawn", False):
-            continue
-        if not _safe(mem, "consent.public", True):
-            continue
-        memories.append(mem)
+        all_memories.append(mem)
 
-    if not memories:
-        return f"# {event_id}\n\n*Chưa có ký ức nào được công bố cho sự kiện này.*\n"
-
-    report = cross_reference(memories, llm=llm)
+    # Lọc theo consent
+    memories = filter_viewable(all_memories, as_of=as_of)
 
     lines: list[str] = []
     lines.append(f"# Lịch sử đa góc nhìn — {event_id}")
     lines.append("")
+
+    if not memories:
+        total_hidden = len(all_memories)
+        if total_hidden > 0:
+            lines.append(
+                f"*Có {total_hidden} ký ức đã được đóng góp cho sự kiện này, "
+                f"nhưng không có ký ức nào đang được công bố công khai tại thời "
+                f"điểm này (do consent, embargo, hoặc withdrawn).*"
+            )
+        else:
+            lines.append("*Chưa có ký ức nào được đóng góp cho sự kiện này.*")
+        return "\n".join(lines) + "\n"
+
+    report = cross_reference(memories, llm=llm)
+
+    # Trauma warning tổng hợp
+    severe_count = sum(1 for m in memories if detect_trauma(m).severity == "severe")
+    if severe_count:
+        lines.append(
+            f"> ⚠ **CẢNH BÁO NỘI DUNG**: {severe_count}/{len(memories)} ký ức "
+            f"bên dưới mô tả trải nghiệm đau thương (bạo lực, mất mát, tù đày, ...). "
+            f"Hãy cân nhắc trước khi đọc tiếp."
+        )
+        lines.append("")
+
     lines.append(
-        "> *Entry này được tổng hợp từ nhiều ký ức cá nhân. Nó không thay thế "
-        "các ký ức gốc, chỉ là một bản đồ để người đọc tự đi sâu hơn. "
-        "Không có phán xét đúng/sai ở đây — chỉ có sự kiện được nhìn từ "
-        "nhiều góc.*"
+        "> *Entry này được tổng hợp từ nhiều ký ức cá nhân. Không có phán xét "
+        "đúng/sai — chỉ có sự kiện được nhìn từ nhiều góc. Mọi trích dẫn được "
+        "ẩn danh, chỉ gắn nhãn vai trò (role).*"
     )
     lines.append("")
+
+    # Tổng quan
     lines.append("## Tổng quan")
     lines.append("")
-    lines.append(f"- **Số ký ức đã được công bố:** {report.memory_count}")
+    lines.append(f"- **Số ký ức đang được công bố:** {report.memory_count}")
+    if len(all_memories) > len(memories):
+        lines.append(
+            f"- **Số ký ức đã đóng góp nhưng chưa công bố:** "
+            f"{len(all_memories) - len(memories)} "
+            f"(do embargo, withdrawn, hoặc không public)"
+        )
     lines.append(f"- **Các vai trò có mặt:** {', '.join(report.roles_present) or '(chưa có)'}")
     if report.missing_perspectives:
         lines.append(
-            f"- **Các vai trò chưa có ký ức (cần được lắng nghe):** "
+            f"- **Các vai trò cần được lắng nghe:** "
             f"{', '.join(report.missing_perspectives)}"
         )
     lines.append(f"- **Độ chắc chắn của tổng hợp:** {report.uncertainty}")
+    if report.integrity_issues:
+        lines.append(
+            f"- **⚠ Integrity issues:** {len(report.integrity_issues)} memory có "
+            f"memory_id không khớp content. Cần rà soát."
+        )
     lines.append("")
 
+    # Điểm trùng / khác
     lines.append("## Điểm trùng khớp giữa nhiều góc nhìn")
     lines.append("")
     if report.convergent_claims:
-        for c in report.convergent_claims:
-            lines.append(f"- `{c['claim_token']}` — được nhắc bởi {c['supported_by']} người kể.")
+        for c in report.convergent_claims[:15]:
+            lines.append(f"- `{c['claim_token']}` — được nhắc bởi {c['supported_by']} người.")
     else:
         lines.append("*Chưa tìm được điểm trùng rõ ràng.*")
     lines.append("")
@@ -400,39 +451,43 @@ def generate_historical_entry(event_id: str, *, archive_root: Path | str = "arch
         lines.append("*Chưa phát hiện điểm khác biệt đáng kể.*")
     lines.append("")
 
-    lines.append("## Các ký ức gốc (được ẩn danh)")
+    # Các ký ức gốc, đã ẩn danh + PII scrub
+    lines.append("## Các ký ức gốc (ẩn danh, đã scrub PII)")
     lines.append("")
     for mem in memories:
         role = _safe(mem, "perspective.role", "?")
+        trauma = detect_trauma(mem)
         lines.append(f"### Góc nhìn: **{role}**")
         lines.append("")
+        if trauma.has_trauma:
+            lines.append(f"> {trauma.content_warning()}")
+            lines.append("")
+
         what = _safe(mem, "memory.what_happened", "")
-        lines.append(what.strip())
+        lines.append(pseudonymize(what).strip())
         lines.append("")
         motiv = _safe(mem, "motivation.your_motivation", "")
         if motiv:
-            lines.append(f"> **Động cơ tự nhận:** {motiv}")
+            lines.append(f"> **Động cơ tự nhận:** {pseudonymize(motiv)}")
         pressure = _safe(mem, "motivation.external_pressure", "")
         if pressure:
-            lines.append(f"> **Áp lực bên ngoài:** {pressure}")
+            lines.append(f"> **Áp lực bên ngoài:** {pseudonymize(pressure)}")
         lines.append("")
 
     lines.append("---")
     lines.append("")
     lines.append(
-        "*Nếu bạn cũng có ký ức về sự kiện này — dù nhỏ đến đâu — hãy đóng góp "
-        "qua `tools/submit.py`. Mỗi góc nhìn đều làm bức tranh lịch sử khó bị "
-        "bóp méo hơn.*"
+        "*Nếu bạn cũng có ký ức về sự kiện này — dù nhỏ đến đâu — hãy đóng "
+        "góp qua `tools/submit.py`. Mỗi góc nhìn làm bức tranh khó bị bóp méo hơn.*"
     )
     return "\n".join(lines) + "\n"
 
 
 __all__ = [
-    "LLMClient",
-    "EchoLLM",
     "MemoryAnalysis",
     "CrossReferenceReport",
     "analyze_memory",
     "cross_reference",
     "generate_historical_entry",
+    "is_publicly_viewable",
 ]
