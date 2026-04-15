@@ -180,10 +180,12 @@ Chi tiết: [`docs/COMPARISON.md`](docs/COMPARISON.md). Thắc mắc skeptical: 
 
 ## Tài liệu
 
+- [`docs/USE_CASES.md`](docs/USE_CASES.md) — **đọc đầu tiên** — 6 nhóm user + làm được gì cụ thể + 5 starter projects
 - [`docs/ethics.md`](docs/ethics.md) — 5 nguyên tắc chi tiết
-- [`docs/workflows.md`](docs/workflows.md) — multi-user patterns (**đọc bắt buộc**)
+- [`docs/workflows.md`](docs/workflows.md) — multi-user patterns
 - [`docs/rag.md`](docs/rag.md) — RAG safeguards
 - [`docs/federation.md`](docs/federation.md) — bundle protocol v1
+- [`docs/deploy.md`](docs/deploy.md) — deploy lên Pages / IPFS / Tor / nginx
 - [`docs/event_decomposition.md`](docs/event_decomposition.md) — vì sao folder phẳng + cách dựng phân cấp
 - [`docs/FAQ.md`](docs/FAQ.md) — trả lời thẳng thắn các câu hỏi skeptical
 - [`docs/COMPARISON.md`](docs/COMPARISON.md) — vs Wikipedia, Obsidian, Mastodon, ...
