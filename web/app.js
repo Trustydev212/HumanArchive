@@ -3,12 +3,17 @@
 // RAG search using a JS-port of HashEmbedder (matching Python byte-for-byte).
 
 import { hashEmbed, piiScrub, cosineSim } from "./hash_embed.js";
+import { t } from "./i18n.js";
 
 const GRAPH_URL = "../archive/graph.json";
 const RAG_URL = "../archive/rag_index.json";
 
 let GRAPH = null;
 let RAG = null;
+
+// Đợi pwa.js hoàn tất initI18n trước khi render
+// (pwa.js chạy trước trong HTML và await initI18n)
+window.addEventListener("load", boot);
 
 async function boot() {
   // Graph
@@ -21,24 +26,24 @@ async function boot() {
     renderCategoryTree();
     renderTagCloud();
   } catch (err) {
-    document.getElementById("overview-stats").innerHTML =
-      `<em>Không load được archive/graph.json — chạy:<br/><code>python tools/graph_export.py json > archive/graph.json</code></em>`;
+    document.getElementById("overview-stats").innerHTML = t("overview.load_error_html");
   }
   // RAG
   try {
     const r = await fetch(RAG_URL);
     RAG = await r.json();
-    document.getElementById("rag-status").textContent =
-      `Index sẵn sàng: ${RAG.entries.length} entries, embedder=${RAG.embedder_name}, dim=${RAG.dim}`;
+    document.getElementById("rag-status").textContent = t("search.index_ready", {
+      n: RAG.entries.length,
+      embedder: RAG.embedder_name,
+      dim: RAG.dim,
+    });
   } catch (err) {
-    document.getElementById("rag-status").textContent =
-      "Index chưa có — chạy: python tools/rag_query.py --build";
+    document.getElementById("rag-status").textContent = t("search.index_missing");
   }
 
   wireSearch();
   wireFilters();
 
-  // Mermaid init
   if (window.mermaid) {
     window.mermaid.initialize({ startOnLoad: false, theme: "neutral" });
   }
@@ -51,11 +56,11 @@ function renderOverview() {
   const edgeCount = GRAPH.edges.length;
   const roleCount = new Set(GRAPH.nodes.flatMap(n => n.roles_present)).size;
   document.getElementById("overview-stats").innerHTML = `
-    <div class="stat"><b>${n}</b><span>events đã công bố</span></div>
-    <div class="stat"><b>${memCount}</b><span>ký ức tổng</span></div>
-    <div class="stat"><b>${edgeCount}</b><span>quan hệ khai báo</span></div>
-    <div class="stat"><b>${roleCount}</b><span>role có mặt</span></div>
-    <div class="stat"><b>${Object.keys(GRAPH.tag_counts).length}</b><span>tag</span></div>
+    <div class="stat"><b>${n}</b><span>${t("stats.events")}</span></div>
+    <div class="stat"><b>${memCount}</b><span>${t("stats.memories")}</span></div>
+    <div class="stat"><b>${edgeCount}</b><span>${t("stats.edges")}</span></div>
+    <div class="stat"><b>${roleCount}</b><span>${t("stats.roles")}</span></div>
+    <div class="stat"><b>${Object.keys(GRAPH.tag_counts).length}</b><span>${t("stats.tags")}</span></div>
   `;
 }
 
@@ -66,7 +71,6 @@ function renderEvents() {
   const list = document.getElementById("event-list");
   list.innerHTML = "";
 
-  // Populate category dropdown once
   const catSel = document.getElementById("filter-category");
   if (catSel.options.length <= 1) {
     const cats = new Set();
@@ -90,7 +94,7 @@ function renderEvents() {
   });
 
   if (!filtered.length) {
-    list.innerHTML = "<p class='muted'>Không có event nào khớp.</p>";
+    list.innerHTML = `<p class='muted'>${t("events.no_match")}</p>`;
     return;
   }
 
@@ -99,9 +103,9 @@ function renderEvents() {
     card.className = "card";
     card.innerHTML = `
       <h3>${escapeHtml(n.name)}</h3>
-      <div class="meta">${escapeHtml(n.date)} · ${n.memory_count} ký ức · ${n.roles_present.length} góc nhìn</div>
+      <div class="meta">${escapeHtml(n.date)} · ${n.memory_count} ${t("events.memories_count")} · ${n.roles_present.length} ${t("events.perspectives_count")}</div>
       <div>${n.roles_present.map(r => `<span class="role-badge">${r}</span>`).join("")}</div>
-      <div class="tags">${n.tags.map(t => `<span class="tag">#${escapeHtml(t)}</span>`).join("")}</div>
+      <div class="tags">${n.tags.map(tg => `<span class="tag">#${escapeHtml(tg)}</span>`).join("")}</div>
     `;
     card.addEventListener("click", () => openEventModal(n));
     list.appendChild(card);
@@ -127,16 +131,16 @@ function openEventModal(n) {
       <div class="modal">
         <button class="close">&times;</button>
         <h2>${escapeHtml(n.name)}</h2>
-        <p class="muted">event_id: <code>${n.event_id}</code></p>
+        <p class="muted">${t("modal.event_id")}: <code>${n.event_id}</code></p>
         <ul>
-          <li><strong>Ngày:</strong> ${escapeHtml(n.date || "(không rõ)")}</li>
-          <li><strong>Địa điểm:</strong> ${escapeHtml(n.location || "(không rõ)")}</li>
-          <li><strong>Categories:</strong> ${n.categories.length ? n.categories.join(", ") : "(chưa phân loại)"}</li>
-          <li><strong>Tags:</strong> ${n.tags.map(t => `#${t}`).join(", ") || "(không có)"}</li>
-          <li><strong>Roles có mặt:</strong> ${n.roles_present.join(", ")}</li>
-          <li><strong>Số ký ức:</strong> ${n.memory_count}</li>
+          <li><strong>${t("modal.date")}:</strong> ${escapeHtml(n.date || t("modal.no_date"))}</li>
+          <li><strong>${t("modal.location")}:</strong> ${escapeHtml(n.location || t("modal.no_location"))}</li>
+          <li><strong>${t("modal.categories")}:</strong> ${n.categories.length ? n.categories.join(", ") : t("modal.no_categories")}</li>
+          <li><strong>${t("modal.tags")}:</strong> ${n.tags.map(tg => `#${tg}`).join(", ") || t("modal.no_tags")}</li>
+          <li><strong>${t("modal.roles_present")}:</strong> ${n.roles_present.join(", ")}</li>
+          <li><strong>${t("modal.memory_count")}:</strong> ${n.memory_count}</li>
         </ul>
-        <p class="muted small">Để xem nội dung ký ức chi tiết, mở Obsidian vault hoặc đọc file JSON trong archive/.</p>
+        <p class="muted small">${t("modal.hint")}</p>
       </div>
     </div>`;
   host.querySelector(".close").onclick = () => host.innerHTML = "";
@@ -222,7 +226,7 @@ function renderTagCloud() {
 function wireSearch() {
   document.getElementById("rag-form").addEventListener("submit", async e => {
     e.preventDefault();
-    if (!RAG) { alert("Index chưa load."); return; }
+    if (!RAG) { alert(t("search.index_not_loaded")); return; }
     const q = document.getElementById("rag-query").value.trim();
     if (!q) return;
     await doSearch(q);
@@ -233,21 +237,17 @@ async function doSearch(rawQuery) {
   const out = document.getElementById("rag-results");
   const status = document.getElementById("rag-status");
 
-  // 1. Scrub PII từ query
   const scrubbed = piiScrub(rawQuery);
-  // 2. Embed bằng HashEmbedder (khớp Python)
   if (RAG.embedder_name !== "HashEmbedder") {
-    status.innerHTML = `⚠ Index dùng <code>${RAG.embedder_name}</code>. Web UI chỉ match được với HashEmbedder. Dùng CLI <code>python tools/rag_query.py</code> thay thế.`;
+    status.innerHTML = t("search.incompatible_embedder_html", { embedder: RAG.embedder_name });
     out.innerHTML = "";
     return;
   }
   const qvec = await hashEmbed(scrubbed, RAG.dim);
 
-  // 3. Cosine similarity
   const scored = RAG.entries.map(e => ({ e, score: cosineSim(qvec, e.embedding) }));
   scored.sort((a, b) => b.score - a.score);
 
-  // 4. Role-balanced top-5
   const seenRoles = new Set(), picked = [], remaining = [];
   for (const s of scored) {
     if (!seenRoles.has(s.e.role)) {
@@ -262,8 +262,7 @@ async function doSearch(rawQuery) {
     picked.push(s);
   }
 
-  // 5. Render
-  status.textContent = `Query (scrubbed): "${scrubbed}" · ${picked.length} kết quả (role-balanced).`;
+  status.textContent = t("search.query_scrubbed", { q: scrubbed, n: picked.length });
   out.innerHTML = "";
   picked.forEach((s, i) => {
     const d = document.createElement("div");
@@ -281,15 +280,12 @@ async function doSearch(rawQuery) {
   });
 
   if (!picked.length) {
-    out.innerHTML = `<p class="muted">Không có ký ức nào phù hợp. Có thể vì chưa ai kể về chủ đề này, hoặc đang bị embargo/withdrawn.</p>`;
+    out.innerHTML = `<p class="muted">${t("search.no_hits")}</p>`;
   }
 }
 
-// ----------------------------- utils ---------------------------------
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[c]));
 }
-
-boot();

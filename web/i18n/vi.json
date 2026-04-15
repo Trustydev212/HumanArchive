@@ -1,5 +1,6 @@
 {
   "_meta": {"language": "Tiếng Việt", "code": "vi"},
+
   "site.title": "HumanArchive",
   "site.tagline": "Lưu trữ ký ức tập thể phi tập trung. Không phán xét — chỉ lắng nghe.",
 
@@ -8,8 +9,11 @@
   "nav.graph": "Graph",
   "nav.search": "RAG search",
   "nav.contribute": "+ Đóng góp",
+  "nav.back_browse": "← Archive browser",
 
+  "overview.title": "Tổng quan",
   "overview.loading": "Đang tải archive/graph.json…",
+  "overview.load_error_html": "Không load được <code>archive/graph.json</code> — chạy:<br/><code>python tools/graph_export.py json &gt; archive/graph.json</code>",
   "overview.principles_title": "5 nguyên tắc bất biến",
   "overview.p1": "Không phán xét đúng/sai — AI không kết luận ai đúng ai sai.",
   "overview.p2": "Không xác định danh tính — PII được scrub trước khi hiển thị/index.",
@@ -23,6 +27,7 @@
   "stats.roles": "role có mặt",
   "stats.tags": "tag",
 
+  "events.title": "Events",
   "events.filter_placeholder": "Lọc theo tên, tag, category…",
   "events.filter_all_categories": "(mọi category)",
   "events.filter_all_roles": "(mọi role)",
@@ -30,17 +35,20 @@
   "events.memories_count": "ký ức",
   "events.perspectives_count": "góc nhìn",
 
+  "graph.title": "Relation graph",
   "graph.description": "Mỗi node là một event, edge là quan hệ (caused_by, part_of, ...). Render bằng Mermaid.",
   "graph.loading": "Đang tải…",
   "graph.category_tree_title": "Category tree",
   "graph.tag_cloud_title": "Tag cloud",
 
+  "search.title": "RAG search",
   "search.description_html": "Tìm kiếm ngữ nghĩa qua <code>archive/rag_index.json</code>. Query được <strong>scrub PII</strong> trước khi embed (chống identity-probe). Kết quả được <strong>role-balanced</strong> (chống bias amplification).",
   "search.placeholder": "Hỏi archive bằng tiếng Việt… VD: tại sao xả đập sớm?",
   "search.button": "Tìm",
   "search.index_ready": "Index sẵn sàng: {n} entries, embedder={embedder}, dim={dim}",
   "search.index_missing": "Index chưa có — chạy: python tools/rag_query.py --build",
   "search.incompatible_embedder_html": "⚠ Index dùng <code>{embedder}</code>. Web UI chỉ match được với HashEmbedder. Dùng CLI <code>python tools/rag_query.py</code> thay thế.",
+  "search.index_not_loaded": "Index chưa load.",
   "search.query_scrubbed": "Query (scrubbed): \"{q}\" · {n} kết quả (role-balanced).",
   "search.no_hits": "Không có ký ức nào phù hợp. Có thể vì chưa ai kể về chủ đề này, hoặc đang bị embargo/withdrawn.",
 
@@ -58,5 +66,77 @@
   "modal.hint": "Để xem nội dung ký ức chi tiết, mở Obsidian vault hoặc đọc file JSON trong archive/.",
 
   "footer.github": "GitHub",
-  "footer.ethics_link": "Xem docs/ethics.md để hiểu các nguyên tắc bất biến."
+  "footer.ethics_link": "Xem docs/ethics.md để hiểu các nguyên tắc bất biến.",
+
+  "pwa.install": "Cài đặt app",
+  "pwa.update_available": "Có bản cập nhật. Tải lại để áp dụng.",
+  "pwa.reload": "Tải lại",
+  "pwa.offline_badge": "Đang offline",
+
+  "submit.title": "Đóng góp một ký ức",
+  "submit.tagline": "Bạn không cần cho chúng tôi biết bạn là ai. Không có câu trả lời \"đúng\" hay \"sai\" — chỉ có sự thật bạn đã sống qua.",
+  "submit.quickstart_title": "Hướng dẫn nhanh",
+  "submit.quickstart_1": "Điền form bên dưới. Mọi trường (trừ động cơ & chuyện đã xảy ra) đều tuỳ chọn.",
+  "submit.quickstart_2": "Form sẽ cảnh báo nếu phát hiện PII. Bạn tự quyết có giữ hay không.",
+  "submit.quickstart_3": "Nhấn <strong>Xem JSON</strong> để xem memory đã validate.",
+  "submit.quickstart_4": "Nhấn <strong>Tải xuống</strong> để lưu file. Sau đó gửi qua PR hoặc email — đừng paste thẳng lên chat công khai nếu có thông tin nhạy cảm.",
+  "submit.quickstart_5": "Dữ liệu chỉ nằm trên thiết bị của bạn cho đến khi bạn chủ động gửi đi.",
+  "submit.draft_saved": "Draft tự lưu vào trình duyệt. Mở lại sẽ tiếp tục được.",
+  "submit.draft_clear": "Xoá draft",
+
+  "submit.section.event": "Thông tin sự kiện",
+  "submit.field.event_name": "Tên sự kiện (theo cách bạn gọi) *",
+  "submit.field.event_date": "Ngày (ISO, VD: 2001-09-11 hoặc ~1975-04) *",
+  "submit.field.event_date_placeholder": "YYYY-MM-DD hoặc ~YYYY-MM",
+  "submit.field.event_location": "Địa điểm (có thể mơ hồ)",
+  "submit.field.event_tags": "Tags (cách nhau bằng dấu phẩy, viết thường gạch nối)",
+  "submit.field.event_tags_placeholder": "lũ-lụt, miền-trung, thập-niên-2020",
+  "submit.field.event_categories": "Categories (paths, cách nhau bằng dấu phẩy)",
+  "submit.field.event_categories_placeholder": "natural-disaster/flood, humanitarian/displacement",
+
+  "submit.section.perspective": "Góc nhìn của bạn",
+  "submit.field.role": "Vai trò *",
+  "submit.field.role_choose": "— chọn —",
+  "submit.field.role.participant": "participant — trực tiếp tham gia",
+  "submit.field.role.witness": "witness — chứng kiến trực tiếp",
+  "submit.field.role.authority": "authority — ở vị trí quyết định",
+  "submit.field.role.organizer": "organizer — tổ chức/lên kế hoạch",
+  "submit.field.role.victim": "victim — bị ảnh hưởng/tổn thương",
+  "submit.field.role.bystander": "bystander — ở gần, không trực tiếp liên quan",
+  "submit.field.proximity": "Tiếp cận",
+  "submit.field.proximity.direct": "direct — chứng kiến trực tiếp",
+  "submit.field.proximity.nearby": "nearby — ở gần",
+  "submit.field.proximity.secondhand": "secondhand — nghe kể lại",
+  "submit.field.age": "Tuổi khi sự kiện xảy ra",
+
+  "submit.section.memory": "Ký ức",
+  "submit.field.what_happened": "Chuyện gì đã xảy ra *",
+  "submit.field.what_happened_hint": "(tối thiểu 20 ký tự)",
+  "submit.field.sensory": "Chi tiết giác quan (mùi, âm thanh, ánh sáng…)",
+  "submit.field.emotional": "Trạng thái cảm xúc lúc đó",
+
+  "submit.section.motivation": "Động cơ (bắt buộc — nguyên tắc 4)",
+  "submit.field.your_motivation": "Vì sao bạn làm/ở đó/phản ứng như vậy? *",
+  "submit.field.your_motivation_hint": "(tối thiểu 10 ký tự)",
+  "submit.field.pressure": "Ai/tổ chức/hoàn cảnh nào gây áp lực lên bạn?",
+  "submit.field.fears": "Bạn sợ điều gì khi đó?",
+
+  "submit.section.context": "Nhìn lại",
+  "submit.field.learned": "Sau này bạn hiểu ra điều gì?",
+  "submit.field.different": "Nếu được chọn lại, bạn có làm khác không?",
+
+  "submit.section.consent": "Đồng ý công bố",
+  "submit.field.public": "Cho phép công bố công khai",
+  "submit.field.embargo": "Trì hoãn công bố đến (để trống nếu không)",
+  "submit.field.allow_ai": "Cho phép AI engine phân tích",
+
+  "submit.section.pii_check": "Kiểm tra PII",
+  "submit.button.scan_pii": "Quét PII trong các trường văn tự do",
+  "submit.pii.none": "✓ Không phát hiện PII rõ ràng (chỉ kiểm tra cơ bản — bạn nên tự đọc lại lần nữa).",
+  "submit.pii.found_suffix": "Phiên bản scrub gợi ý:",
+
+  "submit.section.done": "Hoàn tất",
+  "submit.button.preview": "Xem JSON",
+  "submit.button.download": "Tải xuống memory.json",
+  "submit.footer.guide": "Hướng dẫn đóng góp an toàn: docs/ethics.md"
 }

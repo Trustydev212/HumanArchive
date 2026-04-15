@@ -5,47 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>HumanArchive — Browser</title>
 <link rel="stylesheet" href="style.css" />
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#8b4513" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="HumanArchive" />
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+<link rel="apple-touch-icon" href="icons/icon.svg" />
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 </head>
 <body>
 <header>
-  <h1>HumanArchive</h1>
-  <p class="tagline">Lưu trữ ký ức tập thể phi tập trung. Không phán xét — chỉ lắng nghe.</p>
+  <h1 data-i18n="site.title">HumanArchive</h1>
+  <p class="tagline" data-i18n="site.tagline">Lưu trữ ký ức tập thể phi tập trung. Không phán xét — chỉ lắng nghe.</p>
   <nav>
-    <a href="#overview">Overview</a>
-    <a href="#events">Events</a>
-    <a href="#graph">Graph</a>
-    <a href="#search">RAG search</a>
-    <a href="submit.html">+ Đóng góp</a>
+    <a href="#overview" data-i18n="nav.overview">Overview</a>
+    <a href="#events" data-i18n="nav.events">Events</a>
+    <a href="#graph" data-i18n="nav.graph">Graph</a>
+    <a href="#search" data-i18n="nav.search">RAG search</a>
+    <a href="submit.html" data-i18n="nav.contribute">+ Đóng góp</a>
   </nav>
 </header>
+
+<div id="update-banner" class="update-banner" hidden>
+  <span data-i18n="pwa.update_available">Có bản cập nhật. Tải lại để áp dụng.</span>
+  <button id="reload-btn" data-i18n="pwa.reload">Tải lại</button>
+</div>
 
 <main>
 
 <section id="overview">
-  <h2>Tổng quan</h2>
-  <div id="overview-stats" class="stats">Đang tải <code>archive/graph.json</code>…</div>
+  <h2 data-i18n="overview.title">Tổng quan</h2>
+  <div id="overview-stats" class="stats" data-i18n="overview.loading">Đang tải archive/graph.json…</div>
   <details>
-    <summary>5 nguyên tắc bất biến</summary>
+    <summary data-i18n="overview.principles_title">5 nguyên tắc bất biến</summary>
     <ol class="principles">
-      <li><strong>Không phán xét đúng/sai</strong> — AI không kết luận ai đúng ai sai.</li>
-      <li><strong>Không xác định danh tính</strong> — PII được scrub trước khi hiển thị/index.</li>
-      <li><strong>Luôn đồng cảm trước khi phân tích</strong> — trauma được cảnh báo, không gatekeep.</li>
-      <li><strong>Động cơ quan trọng hơn hành động</strong> — every memory bắt buộc có motivation.</li>
-      <li><strong>Dữ liệu thô không đổi</strong> — withdrawn/embargo filter, memory_id = sha256 verifiable.</li>
+      <li><strong>1.</strong> <span data-i18n="overview.p1"></span></li>
+      <li><strong>2.</strong> <span data-i18n="overview.p2"></span></li>
+      <li><strong>3.</strong> <span data-i18n="overview.p3"></span></li>
+      <li><strong>4.</strong> <span data-i18n="overview.p4"></span></li>
+      <li><strong>5.</strong> <span data-i18n="overview.p5"></span></li>
     </ol>
   </details>
 </section>
 
 <section id="events">
-  <h2>Events</h2>
+  <h2 data-i18n="events.title">Events</h2>
   <div class="controls">
-    <input id="search-events" type="text" placeholder="Lọc theo tên, tag, category…" />
+    <input id="search-events" type="text" data-i18n-placeholder="events.filter_placeholder" />
     <select id="filter-category">
-      <option value="">(mọi category)</option>
+      <option value="" data-i18n="events.filter_all_categories"></option>
     </select>
     <select id="filter-role">
-      <option value="">(mọi role)</option>
+      <option value="" data-i18n="events.filter_all_roles"></option>
       <option>participant</option><option>witness</option><option>authority</option>
       <option>organizer</option><option>victim</option><option>bystander</option>
     </select>
@@ -54,27 +66,23 @@
 </section>
 
 <section id="graph">
-  <h2>Relation graph</h2>
-  <p class="muted">Mỗi node là một event, edge là quan hệ (caused_by, part_of, ...). Render bằng Mermaid.</p>
-  <div id="mermaid-graph" class="mermaid-host">Đang tải…</div>
+  <h2 data-i18n="graph.title">Relation graph</h2>
+  <p class="muted" data-i18n="graph.description">Mỗi node là một event, edge là quan hệ (caused_by, part_of, ...). Render bằng Mermaid.</p>
+  <div id="mermaid-graph" class="mermaid-host" data-i18n="graph.loading">Đang tải…</div>
 
-  <h3>Category tree</h3>
+  <h3 data-i18n="graph.category_tree_title">Category tree</h3>
   <div id="category-tree" class="tree"></div>
 
-  <h3>Tag cloud</h3>
+  <h3 data-i18n="graph.tag_cloud_title">Tag cloud</h3>
   <div id="tag-cloud" class="tagcloud"></div>
 </section>
 
 <section id="search">
-  <h2>RAG search</h2>
-  <p class="muted">
-    Tìm kiếm ngữ nghĩa qua <code>archive/rag_index.json</code>. Query được
-    <strong>scrub PII</strong> trước khi embed (chống identity-probe).
-    Kết quả được <strong>role-balanced</strong> (chống bias amplification).
-  </p>
+  <h2 data-i18n="search.title">RAG search</h2>
+  <p class="muted" data-i18n-html="search.description_html"></p>
   <form id="rag-form">
-    <input id="rag-query" type="text" placeholder="Hỏi archive bằng tiếng Việt… VD: tại sao xả đập sớm?" />
-    <button type="submit">Tìm</button>
+    <input id="rag-query" type="text" data-i18n-placeholder="search.placeholder" />
+    <button type="submit" data-i18n="search.button">Tìm</button>
   </form>
   <div id="rag-status" class="muted small"></div>
   <div id="rag-results"></div>
@@ -86,11 +94,12 @@
 
 <footer>
   <p>
-    HumanArchive · <a href="https://github.com/Trustydev212/HumanArchive">GitHub</a>
-    · Xem <code>docs/ethics.md</code> để hiểu các nguyên tắc bất biến.
+    HumanArchive · <a href="https://github.com/Trustydev212/HumanArchive" data-i18n="footer.github">GitHub</a>
+    · <span data-i18n="footer.ethics_link">Xem docs/ethics.md để hiểu các nguyên tắc bất biến.</span>
   </p>
 </footer>
 
 <script type="module" src="app.js"></script>
+<script type="module" src="pwa.js"></script>
 </body>
 </html>

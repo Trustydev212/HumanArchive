@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="HumanArchive">
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#faf7f0" stop-opacity="1"/>
+      <stop offset="1" stop-color="#f0e8d4" stop-opacity="1"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" ry="96" fill="url(#glow)"/>
+  <g transform="translate(256, 256)">
+    <!-- Radiating threads (voices) -->
+    <g stroke="#8b4513" stroke-width="4" fill="none" opacity="0.55">
+      <line x1="0" y1="0" x2="-140" y2="-80"/>
+      <line x1="0" y1="0" x2="130" y2="-110"/>
+      <line x1="0" y1="0" x2="160" y2="40"/>
+      <line x1="0" y1="0" x2="70" y2="150"/>
+      <line x1="0" y1="0" x2="-100" y2="130"/>
+      <line x1="0" y1="0" x2="-170" y2="20"/>
+      <line x1="0" y1="0" x2="-80" y2="-150"/>
+    </g>
+    <!-- Voice dots -->
+    <g fill="#8b4513">
+      <circle cx="-140" cy="-80" r="16"/>
+      <circle cx="130" cy="-110" r="16"/>
+      <circle cx="160" cy="40" r="16"/>
+      <circle cx="70" cy="150" r="16"/>
+      <circle cx="-100" cy="130" r="16"/>
+      <circle cx="-170" cy="20" r="16"/>
+      <circle cx="-80" cy="-150" r="16"/>
+    </g>
+    <!-- Central event -->
+    <circle r="26" fill="#8b4513"/>
+    <circle r="14" fill="#faf7f0"/>
+  </g>
+</svg>

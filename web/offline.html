@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HumanArchive — Offline</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#8b4513">
+<style>
+  body { margin: 0; background: #faf7f0; color: #1f1f1f;
+    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 2rem; text-align: center; }
+  .box { max-width: 500px; background: #fff; border: 1px solid #e2ddd3;
+    border-radius: 8px; padding: 2rem; }
+  h1 { color: #8b4513; margin: 0 0 1rem; font-size: 1.6rem; }
+  .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+  p { color: #5a4a35; }
+  a { color: #8b4513; }
+  .actions { margin-top: 1.5rem; }
+  button {
+    background: #8b4513; color: white; border: none; padding: 0.7rem 1.4rem;
+    border-radius: 4px; cursor: pointer; font: inherit;
+  }
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="icon">📖</div>
+  <h1>Hiện offline</h1>
+  <p>
+    Bạn đang offline. HumanArchive web app vẫn chạy được cho phần lớn tính năng —
+    kể cả <a href="submit.html">đóng góp ký ức mới</a>, vì form là
+    client-only và data chỉ lưu trong browser cho đến khi bạn tải xuống.
+  </p>
+  <p>
+    <strong>Những gì KHÔNG hoạt động offline:</strong>
+    Mermaid graph render (cần CDN lần đầu), RAG search với index mới
+    (chỉ dùng được index đã cache trước đó).
+  </p>
+  <div class="actions">
+    <button onclick="location.reload()">Thử lại</button>
+  </div>
+  <p style="margin-top: 2rem; font-size: 0.85rem;">
+    <a href="index.html">← Mở archive (từ cache)</a>
+  </p>
+</div>
+</body>
+</html>

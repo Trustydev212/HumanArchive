@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="HumanArchive">
+  <!-- Maskable icon: toàn bộ content nằm trong safe zone 80% (40px padding each side) -->
+  <rect width="512" height="512" fill="#f0e8d4"/>
+  <g transform="translate(256, 256)">
+    <g stroke="#8b4513" stroke-width="4" fill="none" opacity="0.55">
+      <line x1="0" y1="0" x2="-108" y2="-62"/>
+      <line x1="0" y1="0" x2="100" y2="-84"/>
+      <line x1="0" y1="0" x2="122" y2="30"/>
+      <line x1="0" y1="0" x2="54" y2="114"/>
+      <line x1="0" y1="0" x2="-76" y2="100"/>
+      <line x1="0" y1="0" x2="-130" y2="15"/>
+      <line x1="0" y1="0" x2="-62" y2="-116"/>
+    </g>
+    <g fill="#8b4513">
+      <circle cx="-108" cy="-62" r="14"/>
+      <circle cx="100" cy="-84" r="14"/>
+      <circle cx="122" cy="30" r="14"/>
+      <circle cx="54" cy="114" r="14"/>
+      <circle cx="-76" cy="100" r="14"/>
+      <circle cx="-130" cy="15" r="14"/>
+      <circle cx="-62" cy="-116" r="14"/>
+    </g>
+    <circle r="22" fill="#8b4513"/>
+    <circle r="10" fill="#f0e8d4"/>
+  </g>
+</svg>

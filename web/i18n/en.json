@@ -1,5 +1,6 @@
 {
   "_meta": {"language": "English", "code": "en"},
+
   "site.title": "HumanArchive",
   "site.tagline": "Decentralized collective memory archive. Without judgment — only listening.",
 
@@ -8,8 +9,11 @@
   "nav.graph": "Graph",
   "nav.search": "RAG search",
   "nav.contribute": "+ Contribute",
+  "nav.back_browse": "← Archive browser",
 
+  "overview.title": "Overview",
   "overview.loading": "Loading archive/graph.json…",
+  "overview.load_error_html": "Can't load <code>archive/graph.json</code> — run:<br/><code>python tools/graph_export.py json &gt; archive/graph.json</code>",
   "overview.principles_title": "The 5 immutable principles",
   "overview.p1": "No verdicts — AI never concludes who is right or wrong.",
   "overview.p2": "Never identify anyone — PII is scrubbed before display/index.",
@@ -23,6 +27,7 @@
   "stats.roles": "roles present",
   "stats.tags": "tags",
 
+  "events.title": "Events",
   "events.filter_placeholder": "Filter by name, tag, category…",
   "events.filter_all_categories": "(all categories)",
   "events.filter_all_roles": "(all roles)",
@@ -30,17 +35,20 @@
   "events.memories_count": "memories",
   "events.perspectives_count": "perspectives",
 
+  "graph.title": "Relation graph",
   "graph.description": "Each node is an event; edges are relations (caused_by, part_of, ...). Rendered with Mermaid.",
   "graph.loading": "Loading…",
   "graph.category_tree_title": "Category tree",
   "graph.tag_cloud_title": "Tag cloud",
 
+  "search.title": "RAG search",
   "search.description_html": "Semantic search over <code>archive/rag_index.json</code>. Queries are <strong>PII-scrubbed</strong> before embedding (anti identity-probe). Results are <strong>role-balanced</strong> (anti bias amplification).",
   "search.placeholder": "Ask the archive… e.g. why did they release the dam early?",
   "search.button": "Search",
   "search.index_ready": "Index ready: {n} entries, embedder={embedder}, dim={dim}",
   "search.index_missing": "Index not built yet — run: python tools/rag_query.py --build",
   "search.incompatible_embedder_html": "⚠ Index uses <code>{embedder}</code>. Web UI only matches HashEmbedder. Use CLI <code>python tools/rag_query.py</code> instead.",
+  "search.index_not_loaded": "Index not loaded.",
   "search.query_scrubbed": "Query (scrubbed): \"{q}\" · {n} results (role-balanced).",
   "search.no_hits": "No matching memories. Either no one has told this story yet, or they are currently embargoed/withdrawn.",
 
@@ -58,5 +66,77 @@
   "modal.hint": "To read a memory in full, open the Obsidian vault or the JSON file in archive/.",
 
   "footer.github": "GitHub",
-  "footer.ethics_link": "See docs/ethics.md for the immutable principles."
+  "footer.ethics_link": "See docs/ethics.md for the immutable principles.",
+
+  "pwa.install": "Install app",
+  "pwa.update_available": "Update available. Reload to apply.",
+  "pwa.reload": "Reload",
+  "pwa.offline_badge": "Offline",
+
+  "submit.title": "Contribute a memory",
+  "submit.tagline": "You don't have to tell us who you are. There is no 'right' or 'wrong' answer — only the truth you lived.",
+  "submit.quickstart_title": "Quick guide",
+  "submit.quickstart_1": "Fill the form below. All fields except motivation & what happened are optional.",
+  "submit.quickstart_2": "The form warns if PII is detected. You decide what to keep.",
+  "submit.quickstart_3": "Click <strong>Preview JSON</strong> to see the validated memory.",
+  "submit.quickstart_4": "Click <strong>Download</strong> to save the file. Submit via PR or email — don't paste to public chats if it contains sensitive info.",
+  "submit.quickstart_5": "Data stays on your device until you actively send it.",
+  "submit.draft_saved": "Draft auto-saved to browser. Closing and reopening will restore it.",
+  "submit.draft_clear": "Clear draft",
+
+  "submit.section.event": "Event information",
+  "submit.field.event_name": "Event name (as you call it) *",
+  "submit.field.event_date": "Date (ISO, e.g. 2001-09-11 or ~1975-04) *",
+  "submit.field.event_date_placeholder": "YYYY-MM-DD or ~YYYY-MM",
+  "submit.field.event_location": "Location (can be vague)",
+  "submit.field.event_tags": "Tags (comma-separated, lowercase-dashed)",
+  "submit.field.event_tags_placeholder": "flood, central-region, 2020s",
+  "submit.field.event_categories": "Categories (paths, comma-separated)",
+  "submit.field.event_categories_placeholder": "natural-disaster/flood, humanitarian/displacement",
+
+  "submit.section.perspective": "Your perspective",
+  "submit.field.role": "Role *",
+  "submit.field.role_choose": "— choose —",
+  "submit.field.role.participant": "participant — directly involved",
+  "submit.field.role.witness": "witness — direct observer",
+  "submit.field.role.authority": "authority — decision-making position",
+  "submit.field.role.organizer": "organizer — planner/coordinator",
+  "submit.field.role.victim": "victim — affected/harmed",
+  "submit.field.role.bystander": "bystander — nearby, not involved",
+  "submit.field.proximity": "Proximity",
+  "submit.field.proximity.direct": "direct — direct observation",
+  "submit.field.proximity.nearby": "nearby — close by",
+  "submit.field.proximity.secondhand": "secondhand — heard from others",
+  "submit.field.age": "Your age at the time",
+
+  "submit.section.memory": "The memory",
+  "submit.field.what_happened": "What happened *",
+  "submit.field.what_happened_hint": "(at least 20 chars)",
+  "submit.field.sensory": "Sensory details (smell, sound, light…)",
+  "submit.field.emotional": "Emotional state at the time",
+
+  "submit.section.motivation": "Motivation (required — principle 4)",
+  "submit.field.your_motivation": "Why did you do/stay/react this way? *",
+  "submit.field.your_motivation_hint": "(at least 10 chars)",
+  "submit.field.pressure": "Who or what put pressure on you?",
+  "submit.field.fears": "What did you fear then?",
+
+  "submit.section.context": "Looking back",
+  "submit.field.learned": "What did you learn later?",
+  "submit.field.different": "What would you do differently?",
+
+  "submit.section.consent": "Consent",
+  "submit.field.public": "Allow public display",
+  "submit.field.embargo": "Delay publication until (leave blank for no)",
+  "submit.field.allow_ai": "Allow AI engine to analyze",
+
+  "submit.section.pii_check": "PII check",
+  "submit.button.scan_pii": "Scan free-text fields for PII",
+  "submit.pii.none": "✓ No obvious PII detected (basic check only — review yourself once more).",
+  "submit.pii.found_suffix": "Suggested scrubbed version:",
+
+  "submit.section.done": "Done",
+  "submit.button.preview": "Preview JSON",
+  "submit.button.download": "Download memory.json",
+  "submit.footer.guide": "Safe contribution guide: docs/ethics.md"
 }

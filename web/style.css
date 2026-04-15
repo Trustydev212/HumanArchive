@@ -118,6 +118,50 @@ section h2 { border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; }
 footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; color: var(--muted); font-size: 0.88rem; }
 footer a { color: var(--accent); }
 
+/* PWA update banner */
+.update-banner {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--accent); color: white;
+  padding: 0.6rem 1rem; text-align: center;
+  display: flex; justify-content: center; align-items: center; gap: 1rem;
+}
+.update-banner button {
+  background: white; color: var(--accent); border: none;
+  padding: 0.3rem 0.9rem; border-radius: 4px; cursor: pointer;
+  font: inherit; font-weight: 600;
+}
+
+/* Form */
+.form-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.form-grid label, section > label {
+  display: flex; flex-direction: column; gap: 0.25rem;
+  margin: 0.5rem 0; font-size: 0.95rem;
+}
+.form-grid label span:first-child, section > label span:first-child {
+  font-weight: 500;
+}
+section > label { max-width: 100%; }
+input[type="text"], input[type="date"], input[type="number"], select, textarea {
+  padding: 0.5rem 0.65rem; border: 1px solid var(--border);
+  border-radius: 4px; font: inherit; background: var(--bg-card);
+  width: 100%;
+}
+textarea { resize: vertical; }
+
+#draft-indicator { margin-top: 0.6rem; padding: 0.4rem 0.7rem;
+  background: #f0eada; border-left: 3px solid var(--accent);
+  border-radius: 3px;
+}
+#draft-indicator button {
+  margin-left: 0.8rem; padding: 0.2rem 0.6rem;
+  border: 1px solid var(--accent); background: transparent;
+  color: var(--accent); cursor: pointer; border-radius: 3px;
+  font-size: 0.82rem;
+}
+
 @media (max-width: 600px) {
   main { padding: 1rem; }
   header { padding: 1rem; }

@@ -1,0 +1,36 @@
+{
+  "name": "HumanArchive",
+  "short_name": "Archive",
+  "description": "Decentralized collective memory archive — without judgment.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#8b4513",
+  "background_color": "#faf7f0",
+  "lang": "vi",
+  "categories": ["education", "social", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Đóng góp ký ức",
+      "short_name": "Đóng góp",
+      "description": "Mở form đóng góp một ký ức mới",
+      "url": "./submit.html",
+      "icons": [{"src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml"}]
+    }
+  ]
+}
