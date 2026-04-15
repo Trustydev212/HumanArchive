@@ -178,6 +178,31 @@ Bundle có `MANIFEST.json` + merkle root + signature tuỳ chọn. Content-addre
 nên dedup tự nhiên. Xem `docs/federation.md` để hiểu merge rules và
 kênh trao đổi (GitHub / IPFS / Arweave / email / USB).
 
+## Multi-user workflow
+
+HumanArchive không có "admin" hay "moderator" theo nghĩa truyền thống.
+Có 3 pattern cộng tác:
+
+```bash
+# 1. Contribution qua staging (review trước khi merge)
+python tools/staging.py submit my_memory.json
+python tools/staging.py review <memory_id> --type approve --reviewer alice
+python tools/staging.py review <memory_id> --type approve --reviewer bob
+python tools/staging.py merge <memory_id>
+
+# 2. Annotation post-archive (thêm context, không sửa gốc)
+python -c "from core.annotations import create_annotation, save_annotation; \
+  a = create_annotation(target_memory_id='...', author_id='ha-xxxx', \
+                         type='correction', content='...'); \
+  save_annotation(a, 'archive')"
+
+# 3. Audit định kỳ (báo cáo, không gatekeep)
+python tools/audit.py --archive archive --format md > AUDIT.md
+```
+
+Xem `docs/workflows.md` để hiểu đầy đủ 5 personas, web-of-trust model,
+và pattern moderation-without-deletion.
+
 ## LLM-aided detectors (tuỳ chọn)
 
 - `core.privacy.llm_pii.llm_scan_pii()` — bổ sung regex, bắt tên viết

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://humanarchive.org/schema/annotation/v1.json",
+  "title": "HumanArchive Annotation",
+  "description": "Một annotation thêm context cho một memory ĐÃ TỒN TẠI, mà KHÔNG sửa memory gốc. Annotation tự nó cũng bất biến (content-addressed). Nguyên tắc 5 được bảo toàn ở cả hai tầng.",
+  "type": "object",
+  "required": ["schema_version", "annotation_id", "target_memory_id", "author_id", "type", "content", "created_at"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "annotation_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$",
+      "description": "sha256(canonical_json(annotation_without_this_field))[:16]"
+    },
+    "target_memory_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$",
+      "description": "Memory mà annotation này bổ sung. Memory gốc KHÔNG được sửa."
+    },
+    "author_id": {
+      "type": "string",
+      "description": "ID nặc danh của người annotate (ha-xxxx-yyyy) HOẶC pubkey hex của curator đã vouch."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["context", "correction", "dispute", "vouching", "review", "warning"],
+      "description": "context: bổ sung thông tin. correction: chỉ ra detail có thể nhầm (không gán 'sai'). dispute: không đồng ý với phần nội dung (không nói ai đúng). vouching: xác nhận bản thân đã chứng kiến cùng sự kiện. review: tín hiệu approve/request-changes trong staging workflow. warning: cảnh báo (chứ không xoá) nội dung nhạy cảm community phát hiện sau."
+    },
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Nội dung annotation. Ngôn ngữ tự nhiên."
+    },
+    "suggested_changes": {
+      "type": "object",
+      "description": "Gợi ý thay đổi cho contributor gốc cân nhắc. KHÔNG auto-apply.",
+      "properties": {
+        "tags_to_add": {"type": "array", "items": {"type": "string"}},
+        "categories_to_add": {"type": "array", "items": {"type": "string"}},
+        "pii_to_scrub": {
+          "type": "array",
+          "items": {"type": "object", "properties": {"text": {"type": "string"}, "kind": {"type": "string"}}}
+        },
+        "relations_to_add": {
+          "type": "array",
+          "items": {"type": "object", "properties": {"event_id": {"type": "string"}, "type": {"type": "string"}}}
+        }
+      }
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "signature": {
+      "type": "string",
+      "description": "ed25519 signature của canonical_json(annotation_without_this_field), ký bằng private key của author. Tuỳ chọn nhưng khuyến nghị cho review/vouching."
+    }
+  }
+}

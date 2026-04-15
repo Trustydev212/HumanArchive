@@ -1,5 +1,52 @@
 # Changelog
 
+## [v0.6] — Multi-user workflow: staging + annotations + audit
+
+Trả lời: "dùng HumanArchive giữa nhiều người thế nào là tốt nhất?"
+Đây là vấn đề workflow, không chỉ code. Thêm 3 pattern cốt lõi:
+
+### 1. Staging area (review trước khi vào archive)
+
+- `tools/staging.py` — submit/list/review/merge.
+- Memory mới vào `staging/<memory_id>.json`, curator ký review dưới
+  dạng annotation type=review. Đủ N unique reviewers (default 2) →
+  `merge` move sang archive + preserve reviews thành annotations để
+  audit trail vĩnh viễn.
+- Reviews KHÔNG bị xoá sau merge (nguyên tắc 5).
+
+### 2. Annotation layer (context append-only)
+
+- `core/schema/annotation.json` — schema v1.0 với 6 type:
+  context, correction, dispute, vouching, review, warning. Cấm type
+  mang tính phán xét (verdict, guilty, banned, deleted) — nguyên tắc 1.
+- `core/annotations.py` — content-addressed (`annotation_id =
+  sha256(content)[:16]`), bất biến, ed25519 sign/verify optional.
+- Để "sửa" annotation, phải tạo annotation mới type=correction. Không
+  bao giờ ghi đè. Memory gốc không bao giờ bị annotation thay đổi.
+
+### 3. Audit CLI (báo cáo, không gatekeep)
+
+- `tools/audit.py` — report Markdown hoặc JSON, liệt kê:
+  integrity issues, possible PII leaks, single-role events, missing
+  metadata. KHÔNG reject, KHÔNG xoá — operator xem và quyết định.
+
+### Workflow documentation
+
+- `docs/workflows.md` — 5 personas (contributor / curator / researcher
+  / annotator / node operator), web-of-trust model, 3 core workflows
+  (contribution / annotation / federation), moderation-without-deletion
+  patterns, anti-patterns, instance-startup checklist.
+
+### Tests: 72 → 82 (10 annotation tests).
+
+### End-to-end verified:
+
+- Submit → review (alice + bob) → merge → archive + annotations: OK
+- Audit trên demo archive: phát hiện 2 memory có PII (tên người) còn
+  sót + 1 event single-role → actionable report không gây friction.
+
+---
+
 ## [v0.5] — "Tất cả": 5 hướng tiếp theo cùng lúc
 
 ### 1. LLM-aided PII + trauma (graceful fallback)
