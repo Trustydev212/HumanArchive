@@ -118,6 +118,36 @@ python tools/graph_export.py json      > graph.json        # cho D3/Cytoscape/Ob
 Xem `docs/event_decomposition.md` để hiểu đầy đủ trade-off và các loại
 quan hệ (`caused_by`, `part_of`, `led_to`, `contradicts`, ...).
 
+## Obsidian vault & RAG
+
+### Obsidian
+
+Archive → một Obsidian vault có sẵn graph view, backlinks, và Mermaid:
+
+```bash
+python tools/obsidian_export.py --output obsidian_vault
+# mở obsidian_vault/ trong Obsidian → Ctrl/Cmd+G để xem graph view
+```
+
+### RAG tìm kiếm ngữ nghĩa
+
+```bash
+python tools/rag_query.py --build              # build index
+python tools/rag_query.py "tại sao xả đập?"    # hỏi, nhận answer + citations
+```
+
+**RAG của HumanArchive khác RAG thông thường** ở 4 điểm (xem `docs/rag.md`):
+
+1. **PII scrub trước khi embed** — index không mã hoá danh tính
+2. **Consent filter ở build_index** — withdrawn/embargoed không bao giờ vào vector store
+3. **Role-balanced retrieval** — chống bias, đảm bảo đa góc nhìn luôn được
+   trả về (không bị witness đông áp đảo victim ít)
+4. **Query scrub** — chặn identity probe attack (`"kể về anh Nguyễn Văn An"`)
+
+Backend embedder pluggable: **Voyage** (Anthropic partner, tốt nhất),
+**SentenceTransformer** (local, đa ngôn ngữ), hoặc **HashEmbedder**
+(zero-dep fallback).
+
 ---
 
 ## Bắt đầu nhanh

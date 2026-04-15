@@ -1,3 +1,6 @@
+# Obsidian vault is generated — regenerate from archive with tools/obsidian_export.py
+obsidian_vault/
+
 __pycache__/
 *.pyc
 *.pyo

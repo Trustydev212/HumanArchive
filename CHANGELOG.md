@@ -1,5 +1,51 @@
 # Changelog
 
+## [v0.4] — Obsidian vault export + RAG với safeguards
+
+### Obsidian export (`tools/obsidian_export.py`)
+
+Archive phẳng → Obsidian vault với `[[wikilinks]]` tự động dựng graph
+view. Một note/event (frontmatter giàu metadata + Mermaid relation
+diagram), một note/memory (PII scrubbed + content warning nếu có
+trauma), by-role pages, taxonomy pages. Tôn trọng consent filter.
+
+### RAG (`core/rag/`)
+
+RAG đặc thù cho ký ức, không phải RAG cổ điển. Bốn safeguard:
+
+| Rủi ro | Phòng tránh |
+|---|---|
+| PII leak qua embedding | Scrub PII TRƯỚC khi embed (không sau retrieve) |
+| Consent drift | `is_publicly_viewable` + `allows_ai_analysis` filter ở build_index |
+| Bias amplification (top-k toàn witness) | `role_balance=True` — top-1 mỗi role trước, rồi fill |
+| Identity probe attack | `search_text` scrub PII từ query trước embed |
+
+Pluggable embedder (Voyage nếu có API key / SentenceTransformer /
+HashEmbedder zero-dep). Answer pipeline luôn có citations và không bịa
+nếu không có hit.
+
+### Tests
+
+- `tests/test_rag.py` — 10 tests, đặc biệt các property đạo đức:
+  `test_withdrawn_never_indexed`, `test_embargoed_never_indexed`,
+  `test_pii_scrubbed_before_indexing`, `test_query_with_name_is_scrubbed`,
+  `test_role_balanced_picks_diverse_roles`.
+
+### Tổng 60 tests pass (50 → 60).
+
+### Tools
+
+- `tools/rag_query.py` — `--build` để build index; `python ... "query"`
+  để hỏi. Citations đầy đủ theo memory_id + role.
+- `tools/obsidian_export.py` — sinh `obsidian_vault/` mở được trong
+  Obsidian/Foam/Logseq.
+
+### Docs
+
+- `docs/rag.md` — giải thích 4 rủi ro đặc thù và cách chống.
+
+---
+
 ## [v0.3] — Event decomposition & graph views
 
 Trả lời câu hỏi: "Có nên chia folder theo loại sự kiện (war/, storm/,
