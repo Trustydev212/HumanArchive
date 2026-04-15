@@ -7,12 +7,14 @@
 **Lưu trữ ký ức tập thể phi tập trung của nhân loại — không phán xét.**
 
 [![CI](https://github.com/Trustydev212/HumanArchive/actions/workflows/ci.yml/badge.svg)](https://github.com/Trustydev212/HumanArchive/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-118%20passing-brightgreen)](tests/)
+[![Pages](https://github.com/Trustydev212/HumanArchive/actions/workflows/pages.yml/badge.svg)](https://trustydev212.github.io/HumanArchive/)
+[![Tests](https://img.shields.io/badge/tests-135%20passing-brightgreen)](tests/)
 [![License: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)
 [![Content: CC BY-SA 4.0](https://img.shields.io/badge/content-CC--BY--SA--4.0-lightgrey)](LICENSE-CONTENT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![Claude](https://img.shields.io/badge/powered_by-Claude%20Opus%204.6-8b4513)](https://www.anthropic.com)
 [![MCP](https://img.shields.io/badge/MCP-compatible-7b2cbf)](docs/AGENT.md)
+[![PWA](https://img.shields.io/badge/PWA-installable-5a4a35)](https://trustydev212.github.io/HumanArchive/web/)
 
 Tiếng Việt · [English](README_EN.md)
 
@@ -39,7 +41,14 @@ thể đóng góp một ký ức **nặc danh**. AI cross-reference nhiều ký 
 tìm điểm trùng và điểm khác — **không kết luận ai đúng**. Dữ liệu thô
 bất biến; consent được enforce bằng code.
 
-## Thử trong 60 giây
+## Thử ngay online (không cần cài)
+
+🌐 **[https://trustydev212.github.io/HumanArchive/](https://trustydev212.github.io/HumanArchive/)**
+
+Live demo được deploy tự động từ main branch. Bao gồm archive browser,
+submit form (PWA installable), timeline, Obsidian vault snapshot.
+
+## Thử trong 60 giây (local)
 
 ```bash
 git clone https://github.com/Trustydev212/HumanArchive

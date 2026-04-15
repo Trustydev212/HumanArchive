@@ -1,0 +1,108 @@
+name: Deploy to GitHub Pages
+
+# Deploy web/ + fresh archive/graph.json + archive/rag_index.json lên
+# https://trustydev212.github.io/HumanArchive/
+#
+# Trigger:
+#   - Push to main (auto)
+#   - Manual từ Actions tab (workflow_dispatch)
+#
+# Setup 1 lần trên GitHub: Settings → Pages → Source: "GitHub Actions"
+# https://github.com/Trustydev212/HumanArchive/settings/pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - "archive/**"
+      - "core/**"
+      - "tools/**"
+      - "humanarchive/**"
+      - "pyproject.toml"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Regenerate archive views
+        run: |
+          mkdir -p archive
+          python tools/graph_export.py json > archive/graph.json
+          python tools/rag_query.py --build
+          python tools/timeline_export.py --output archive/TIMELINE.html
+          python tools/audit.py --archive archive --format md > archive/AUDIT.md
+          python tools/obsidian_export.py --output obsidian_vault
+
+      - name: Build _site/ staging dir
+        run: |
+          mkdir -p _site/web _site/archive _site/assets _site/docs _site/obsidian_vault
+
+          # Web app
+          cp -r web/. _site/web/
+
+          # Archive JSON + generated views (respects consent filter)
+          cp -r archive/. _site/archive/
+
+          # Assets (logo, banner)
+          cp -r assets/. _site/assets/
+
+          # Docs (markdown — GitHub Pages sẽ render raw nhưng có link được)
+          cp -r docs/. _site/docs/
+
+          # Obsidian vault snapshot
+          cp -r obsidian_vault/. _site/obsidian_vault/
+
+          # Generate landing page
+          python .github/workflows/build_landing.py _site/index.html
+
+          # 404 page
+          cp web/offline.html _site/404.html
+
+          # .nojekyll để GitHub Pages không process via Jekyll (không cần)
+          touch _site/.nojekyll
+
+          # Size check
+          echo "=== _site size ==="
+          du -sh _site/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site/
+
+  deploy:
+    name: Deploy to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

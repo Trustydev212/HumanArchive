@@ -5,8 +5,20 @@
 import { hashEmbed, piiScrub, cosineSim } from "./hash_embed.js";
 import { t } from "./i18n.js";
 
-const GRAPH_URL = "../archive/graph.json";
-const RAG_URL = "../archive/rag_index.json";
+// Path resolution: dev mode serves từ repo root (web/index.html → ../archive/)
+// prod GitHub Pages cũng vậy (deploy giữ structure repo). Nhưng nếu ai đó
+// deploy web/ làm root (không khuyến nghị), thử fallback paths.
+const ARCHIVE_PREFIXES = ["../archive/", "archive/", "./archive/"];
+
+async function fetchArchive(filename) {
+  for (const prefix of ARCHIVE_PREFIXES) {
+    try {
+      const r = await fetch(prefix + filename);
+      if (r.ok) return r;
+    } catch { /* try next */ }
+  }
+  throw new Error(`Cannot find ${filename} in any archive/ path`);
+}
 
 let GRAPH = null;
 let RAG = null;
@@ -18,7 +30,7 @@ window.addEventListener("load", boot);
 async function boot() {
   // Graph
   try {
-    const r = await fetch(GRAPH_URL);
+    const r = await fetchArchive("graph.json");
     GRAPH = await r.json();
     renderOverview();
     renderEvents();
@@ -30,7 +42,7 @@ async function boot() {
   }
   // RAG
   try {
-    const r = await fetch(RAG_URL);
+    const r = await fetchArchive("rag_index.json");
     RAG = await r.json();
     document.getElementById("rag-status").textContent = t("search.index_ready", {
       n: RAG.entries.length,
