@@ -1,0 +1,174 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://humanarchive.org/schema/memory/v1.json",
+  "title": "HumanArchive Memory",
+  "description": "Chuẩn dữ liệu cho một ký ức cá nhân về một sự kiện lịch sử. Phiên bản v1. Bất cứ thay đổi nào vi phạm 5 nguyên tắc trong docs/ethics.md đều bị từ chối.",
+  "type": "object",
+  "required": ["schema_version", "memory_id", "contributor_id", "event", "perspective", "memory", "motivation", "consent"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Phiên bản schema. Hiện tại chỉ chấp nhận 1.0."
+    },
+    "memory_id": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{16}$",
+      "description": "sha256(canonical_json(memory_without_this_field))[:16]. Content-addressed."
+    },
+    "contributor_id": {
+      "type": "string",
+      "pattern": "^ha-[a-z0-9]{4}-[a-z0-9]{4}$",
+      "description": "ID nặc danh. Không bao giờ truy ngược về con người thật."
+    },
+    "submitted_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Thời điểm submit (UTC)."
+    },
+
+    "event": {
+      "type": "object",
+      "required": ["event_id", "name", "date"],
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[a-z0-9-]+-[a-f0-9]{4}$",
+          "description": "Ví dụ: 1975-saigon-fall-a3f2"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Tên sự kiện theo cách người kể gọi nó."
+        },
+        "date": {
+          "type": "string",
+          "description": "ISO-8601. Có thể là ngày cụ thể (2001-09-11), khoảng (2001-09-11/2001-09-20), hoặc xấp xỉ (~1975-04)."
+        },
+        "location": {
+          "type": "string",
+          "description": "Địa điểm — không bắt buộc chính xác. Có thể là 'Sài Gòn', 'đâu đó ở Trường Sơn', 'không nhớ rõ'."
+        }
+      }
+    },
+
+    "perspective": {
+      "type": "object",
+      "required": ["role"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["participant", "witness", "authority", "organizer", "victim", "bystander"],
+          "description": "Vai trò của người kể trong sự kiện. Mọi role đều có giá trị ngang nhau."
+        },
+        "proximity": {
+          "type": "string",
+          "enum": ["direct", "nearby", "secondhand"],
+          "description": "Trực tiếp chứng kiến / ở gần / nghe kể lại."
+        },
+        "age_at_event": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
+          "description": "Tuổi của người kể khi sự kiện xảy ra. Ảnh hưởng đến độ tin cậy của ký ức trẻ em."
+        }
+      }
+    },
+
+    "memory": {
+      "type": "object",
+      "required": ["what_happened"],
+      "properties": {
+        "what_happened": {
+          "type": "string",
+          "minLength": 20,
+          "description": "Mô tả sự kiện từ góc nhìn cá nhân. Ngôn ngữ tự nhiên, không bị biên tập."
+        },
+        "sensory_details": {
+          "type": "string",
+          "description": "Chi tiết giác quan (mùi, âm thanh, ánh sáng) — giúp xác thực tính trực tiếp của ký ức."
+        },
+        "emotional_state": {
+          "type": "string",
+          "description": "Trạng thái cảm xúc của người kể tại thời điểm đó. AI sẽ dùng để đồng cảm trước khi phân tích."
+        }
+      }
+    },
+
+    "motivation": {
+      "type": "object",
+      "required": ["your_motivation"],
+      "description": "BẮT BUỘC. Nguyên tắc 4: Động cơ quan trọng hơn hành động.",
+      "properties": {
+        "your_motivation": {
+          "type": "string",
+          "minLength": 10,
+          "description": "Vì sao bạn làm/ở đó/phản ứng như vậy? Hãy thành thật nhất có thể."
+        },
+        "external_pressure": {
+          "type": "string",
+          "description": "Ai/tổ chức/hoàn cảnh nào ảnh hưởng đến quyết định của bạn? Có thể bỏ trống nếu không có."
+        },
+        "fears_at_the_time": {
+          "type": "string",
+          "description": "Bạn sợ điều gì khi đó? (Mất mạng, mất người thân, bị khinh, ...)"
+        }
+      }
+    },
+
+    "context": {
+      "type": "object",
+      "properties": {
+        "what_learned_after": {
+          "type": "string",
+          "description": "Nhìn lại, bạn hiểu ra điều gì mà lúc đó chưa biết?"
+        },
+        "would_do_differently": {
+          "type": "string",
+          "description": "Nếu được chọn lại, bạn có làm khác không? Vì sao?"
+        },
+        "related_event_ids": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Các event_id liên quan."
+        }
+      }
+    },
+
+    "consent": {
+      "type": "object",
+      "required": ["public"],
+      "properties": {
+        "public": {
+          "type": "boolean",
+          "description": "Nếu false, chỉ researcher có quyền đọc (với cam kết bảo mật)."
+        },
+        "embargo_until": {
+          "type": ["string", "null"],
+          "format": "date",
+          "description": "Trì hoãn công bố đến ngày này. Dùng khi cần bảo vệ bản thân/người thân."
+        },
+        "withdrawn": {
+          "type": "boolean",
+          "default": false,
+          "description": "Người đóng góp đã rút lại. Nội dung vẫn được giữ trong archive nhưng không hiển thị công khai."
+        },
+        "allow_ai_analysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Cho phép AI engine phân tích. Nếu false, memory chỉ được lưu trữ dạng thô."
+        }
+      }
+    },
+
+    "language": {
+      "type": "string",
+      "description": "Mã ngôn ngữ của nội dung (vi, en, fr, ...). ISO-639-1."
+    },
+    "signature": {
+      "type": "string",
+      "description": "Chữ ký ed25519 của canonical_json(memory_without_this_field), ký bằng ephemeral key của thiết bị người đóng góp."
+    }
+  }
+}
